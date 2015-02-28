@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.lundincast.my_finance_manager" >
+
+    <application
+        android:allowBackup="true"
+        android:debuggable="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.AppCompat.Light.DarkActionBar" >
+        <uses-sdk android:minSdkVersion="11"
+            android:targetSdkVersion="19" />
+        <activity
+            android:name=".activities.MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <name android:name="android.intent.name.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activities.TransactionActivity"
+            android:label="@string/title_activity_transaction" >
+        </activity>
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:label="@string/title_activity_settings" >
+        </activity>
+        <activity
+            android:name=".activities.ListCategoriesActivity"
+            android:label="@string/title_activity_categories"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
+        </activity>
+        <activity
+            android:name=".activities.CreateCategoriesActivity"
+            android:label="@string/title_activity_categories_edit"
+            android:parentActivityName=".activities.ListCategoriesActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.ListCategoriesActivity" />
+        </activity>
+        <activity
+            android:name=".activities.EditCategoriesActivity"
+            android:label="@string/title_activity_edit_categories"
+            android:parentActivityName=".activities.ListCategoriesActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.lundincast.my_finance_manager.activities.ListCategoriesActivity" />
+        </activity>
+    </application>
+
+</manifest>

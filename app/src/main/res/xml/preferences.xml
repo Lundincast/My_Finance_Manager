@@ -10,12 +10,9 @@
     <PreferenceCategory
         android:title="@string/pref_expense_settings"
         android:key="pref_key_expense_settings" >
-        <ListPreference
+        <Preference
             android:key="pref_key_categories"
-            android:title="@string/pref_title_categories"
-            android:dialogTitle="@string/pref_title_categories"
-            android:entries="@array/categories_array"
-            android:entryValues="@array/categories_array" />
+            android:title="@string/pref_title_categories" />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/pref_income_settings"

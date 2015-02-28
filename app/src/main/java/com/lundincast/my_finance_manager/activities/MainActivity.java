@@ -45,9 +45,6 @@ public class MainActivity extends ActionBarActivity {
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
                 startActivity(settingsIntent);
                 break;
-            case R.id.categories:
-                Intent categoriesIntent = new Intent(this, ListCategoriesActivity.class);
-                startActivity(categoriesIntent);
         }
 
 

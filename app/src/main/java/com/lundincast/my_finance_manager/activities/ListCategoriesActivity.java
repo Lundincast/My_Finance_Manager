@@ -86,13 +86,6 @@ public class ListCategoriesActivity extends ListActivity {
                 Intent editIntent = new Intent(this, CreateCategoriesActivity.class);
                 startActivityForResult(editIntent, 1);
                 break;
-            case R.id.delete:
-                if (getListAdapter().getCount() > 0) {
-                    category = (Category) getListAdapter().getItem(0);
-                    datasource.deleteCategory(category);
-                    adapter.remove(category);
-                }
-                break;
         }
         adapter.notifyDataSetChanged();
     }

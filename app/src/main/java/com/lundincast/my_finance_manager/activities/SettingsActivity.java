@@ -1,5 +1,7 @@
 package com.lundincast.my_finance_manager.activities;
 
+import android.content.Intent;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -14,6 +16,15 @@ public class SettingsActivity extends PreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
+        Preference categoryPref = (Preference) findPreference("pref_key_categories");
+        categoryPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent intent = new Intent(getApplicationContext(), ListCategoriesActivity.class);
+                startActivity(intent);
+                return false;
+            }
+        });
     }
 
 

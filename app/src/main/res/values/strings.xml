@@ -20,6 +20,7 @@
     <string name="pref_title_about">About</string>
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="default_text_category_name">Enter name</string>
+    <string name="history">History</string>
 
     <string-array name="categories_array">
         <item>Transportation</item>
@@ -28,12 +29,12 @@
         <item>Travel</item>
     </string-array>
 
-    <string name="title_activity_categories">CategoriesActivity</string>
+    <string name="title_activity_categories">Categories</string>
     <string name="title_activity_categories_edit">CategoriesEditActivity</string>
-    <string name="title_activity_edit_categories">EditCategoriesActivity</string>
-    <string name="title_activity_list_transactions">ListTransactionsActivity</string>
-    <string name="title_activity_create_transaction">CreateTransactionActivity</string>
-    <string name="title_activity_edit_transaction">EditTransactionActivity</string>
+    <string name="title_activity_edit_categories">Edit Category</string>
+    <string name="title_activity_list_transactions">Transactions</string>
+    <string name="title_activity_create_transaction">Create Transaction</string>
+    <string name="title_activity_edit_transaction">Edit Transaction</string>
     <string name="Update">Update</string>
 
 </resources>

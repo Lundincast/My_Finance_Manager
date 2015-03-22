@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,7 +46,7 @@ public class ListCategoriesActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_categories);
+           setContentView(R.layout.activity_categories);
         datasource = new CategoriesDataSource(this);
         try {
             datasource.open();
@@ -58,6 +59,7 @@ public class ListCategoriesActivity extends ListActivity {
         // elements in a ListView
         final ArrayAdapter<Category> adapter = new ArrayAdapter<Category>(this,
                 R.layout.categories_list, R.id.TextView01, values);
+
         setListAdapter(adapter);
         ListView lv = getListView();
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -73,20 +75,6 @@ public class ListCategoriesActivity extends ListActivity {
 
     }
 
-    // Will be called via the onClick attribute
-    // of the button in activity_categories.xml
-    public void onClick(View view) {
-        @SuppressWarnings("unchecked")
-        ArrayAdapter<Category> adapter = (ArrayAdapter<Category>) getListAdapter();
-        Category category = null;
-        switch (view.getId()) {
-            case R.id.add:
-                Intent editIntent = new Intent(this, CreateCategoriesActivity.class);
-                startActivityForResult(editIntent, 1);
-                break;
-        }
-        adapter.notifyDataSetChanged();
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -117,7 +105,7 @@ public class ListCategoriesActivity extends ListActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_categories, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -128,8 +116,9 @@ public class ListCategoriesActivity extends ListActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_new) {
+            Intent editIntent = new Intent(this, CreateCategoriesActivity.class);
+            startActivityForResult(editIntent, 1);
         }
 
         return super.onOptionsItemSelected(item);

@@ -11,16 +11,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:inputType="text"
-        android:text="@string/default_text_category_name"/>
-
-    <Button
-        android:id="@+id/create_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Create"
-        android:layout_below="@+id/category_name"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="23dp"
-        android:onClick="onClick" />
+        android:hint="@string/default_text_category_name"/>
 
 </RelativeLayout>

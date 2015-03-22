@@ -45,14 +45,6 @@ public class EditCategoriesActivity extends ActionBarActivity {
         }
     }
 
-    public void onClick(View view) {
-        final EditText categoryName = (EditText) findViewById(R.id.category_name);
-        category.setName(categoryName.getText().toString());
-        datasource.updateCategory(category);
-        Intent intent = new Intent(getApplicationContext(), ListCategoriesActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -90,6 +82,14 @@ public class EditCategoriesActivity extends ActionBarActivity {
                     }
                 })
                 .show();
+        }
+        if (id == R.id.accept_action) {
+            final EditText categoryName = (EditText) findViewById(R.id.category_name);
+            category.setName(categoryName.getText().toString());
+            datasource.updateCategory(category);
+            Intent intent = new Intent(getApplicationContext(), ListCategoriesActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);

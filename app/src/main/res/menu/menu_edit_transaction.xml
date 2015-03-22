@@ -3,7 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.lundincast.my_finance_manager.activities.EditTransactionActivity">
 
-    <item android:id="@+id/delete_action" android:title="Delete"
-        android:orderInCategory="100" app:showAsAction="always" />
+    <item android:id="@+id/update_action"
+        android:icon="@drawable/ic_action_accept"
+        android:title="@string/Update"
+        android:showAsAction="always" />
+
+    <item android:id="@+id/delete_action"
+        android:icon="@drawable/ic_action_discard"
+        android:title="Delete"
+        android:showAsAction="always" />
+
+
 
 </menu>

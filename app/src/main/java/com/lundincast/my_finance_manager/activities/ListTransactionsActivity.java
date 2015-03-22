@@ -42,9 +42,9 @@ public class ListTransactionsActivity extends ListActivity {
         startManagingCursor(cursor);
 
         // The desired columns to be bound
-        String[] columns = new String[] {cursor.getColumnName(3), cursor.getColumnName(4)};
+        String[] columns = new String[] {cursor.getColumnName(1), cursor.getColumnName(3), cursor.getColumnName(4)};
         // The xml defined views which the data will be bound to
-        int[] to = new int[] {R.id.name_entry, R.id.comment_entry};
+        int[] to = new int[] {R.id.transaction_price, R.id.name_entry, R.id.comment_entry};
 
         final SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
                 R.layout.activity_list_transactions_entry,
@@ -69,14 +69,6 @@ public class ListTransactionsActivity extends ListActivity {
 
     }
 
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.add_transaction:
-                Intent intent = new Intent(this, CreateTransactionActivity.class);
-                startActivity(intent);
-                break;
-        }
-    }
 
     @Override
     protected void onPause() {
@@ -110,10 +102,11 @@ public class ListTransactionsActivity extends ListActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
+            startActivity(settingsIntent);
         }
         if (id == R.id.add_transaction) {
-            Intent intent = new Intent(this, ListTransactionsActivity.class);
+            Intent intent = new Intent(this, CreateTransactionActivity.class);
             startActivity(intent);
         }
 

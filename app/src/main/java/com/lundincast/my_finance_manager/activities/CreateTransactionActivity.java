@@ -135,29 +135,6 @@ public class CreateTransactionActivity extends ListActivity implements TheListen
     }
 
 
-    // Will be called via the onClick attribute
-    // of the button in activity_transaction_create
-    public void onClick(View view) {
-        // retrieve transaction input
-        final TextView transactionPrice = (TextView) findViewById(R.id.transaction_price);
-        final EditText transactionDate = (EditText) findViewById(R.id.transaction_date);
-        final EditText transactionComment = (EditText) findViewById(R.id.transaction_comment);
-
-        String transacPriceString = transactionPrice.getText().toString();
-        transacPriceString = transacPriceString.substring(0, transacPriceString.length() - 2);
-        short transacPrice = Short.parseShort(transacPriceString);
-        String transacDate = transactionDate.getText().toString();
-        String transacComment = transactionComment.getText().toString();
-
-        Transaction transaction = new Transaction(transacPrice, selectedCategory, transacDate, transacComment);
-        transacDatasource.createTransaction(transaction);
-
-        Intent intent = new Intent(this, ListTransactionsActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-
-    }
-
     public void showDatePickerDialog(View view) {
         DialogFragment newFragment = new DatePickerFragment();
         newFragment.show(getFragmentManager(), "datePicker");
@@ -180,8 +157,24 @@ public class CreateTransactionActivity extends ListActivity implements TheListen
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_create) {
+            // retrieve transaction input
+            final TextView transactionPrice = (TextView) findViewById(R.id.transaction_price);
+            final EditText transactionDate = (EditText) findViewById(R.id.transaction_date);
+            final EditText transactionComment = (EditText) findViewById(R.id.transaction_comment);
+
+            String transacPriceString = transactionPrice.getText().toString();
+            transacPriceString = transacPriceString.substring(0, transacPriceString.length() - 2);
+            short transacPrice = Short.parseShort(transacPriceString);
+            String transacDate = transactionDate.getText().toString();
+            String transacComment = transactionComment.getText().toString();
+
+            Transaction transaction = new Transaction(transacPrice, selectedCategory, transacDate, transacComment);
+            transacDatasource.createTransaction(transaction);
+
+            Intent intent = new Intent(this, ListTransactionsActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);

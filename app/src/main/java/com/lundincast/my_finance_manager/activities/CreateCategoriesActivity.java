@@ -1,18 +1,15 @@
 package com.lundincast.my_finance_manager.activities;
 
+import android.app.ListActivity;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 
 import com.lundincast.my_finance_manager.R;
 import com.lundincast.my_finance_manager.activities.data.CategoriesDataSource;
-import com.lundincast.my_finance_manager.activities.model.Category;
 
 import java.sql.SQLException;
 
@@ -25,7 +22,7 @@ public class CreateCategoriesActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_categories_edit);
+        setContentView(R.layout.activity_create_category);
 
         datasource = new CategoriesDataSource(this);
         try {
@@ -35,16 +32,7 @@ public class CreateCategoriesActivity extends ActionBarActivity {
         }
     }
 
-    // Will be called via the onClick attribute
-    // of the button in activity_categories_create
-    public void onClick(View view) {
-        final EditText categoryName = (EditText) findViewById(R.id.category_name);
-        String category = categoryName.getText().toString();
-        datasource.createCategory(category);
-        Intent intent = new Intent(this, ListCategoriesActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-    }
+
 
     @Override
     protected void onResume() {
@@ -65,8 +53,8 @@ public class CreateCategoriesActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_categories_edit, menu);
-        return true;
+        getMenuInflater().inflate(R.menu.menu_create_categories, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -77,8 +65,13 @@ public class CreateCategoriesActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_new) {
+                final EditText categoryName = (EditText) findViewById(R.id.category_name);
+                String category = categoryName.getText().toString();
+                datasource.createCategory(category);
+                Intent intent = new Intent(this, ListCategoriesActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);

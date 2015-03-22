@@ -1,10 +1,12 @@
 package com.lundincast.my_finance_manager.activities;
 
 import android.app.ListActivity;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,14 +21,14 @@ import java.sql.SQLException;
 import java.util.List;
 
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 public class ListCategoriesActivity extends ListActivity {
 
     private CategoriesDataSource datasource;
 
-    // This is the Adapter being used to display the list's data
-    ArrayAdapter<Category> mAdapter;
+    ArrayAdapter<Category> mAdapterOld;
 
     // These are the Contacts rows that we will retrieve
     //static final String[] PROJECTION = new String[] {ContactsContract.Data._ID,
@@ -43,10 +45,6 @@ public class ListCategoriesActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // For the cursor adapter, specify which columns go into which views
-        String[] fromColumns = {ContactsContract.Data.DISPLAY_NAME};
-        int[] toViews = {android.R.id.text1}; // The TextView in simple_list_item_1
-
         setContentView(R.layout.activity_categories);
         datasource = new CategoriesDataSource(this);
         try {
@@ -54,7 +52,7 @@ public class ListCategoriesActivity extends ListActivity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        List<Category> values = datasource.getAllCategories();
+        List<Category> values = datasource.getAllCategoriesList();
 
         // use the SimpleCursorAdapter to show the
         // elements in a ListView
@@ -71,7 +69,7 @@ public class ListCategoriesActivity extends ListActivity {
                 startActivityForResult(editIntent, 2);
             }
         });
-        this.mAdapter = adapter;
+        this.mAdapterOld = adapter;
 
     }
 
@@ -92,8 +90,8 @@ public class ListCategoriesActivity extends ListActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mAdapter = null;
-        mAdapter = (ArrayAdapter<Category>) getListAdapter();
+        mAdapterOld = null;
+        mAdapterOld = (ArrayAdapter<Category>) getListAdapter();
 
         Toast toast = Toast.makeText(getApplicationContext(), "New category created", Toast.LENGTH_SHORT);
         toast.show();

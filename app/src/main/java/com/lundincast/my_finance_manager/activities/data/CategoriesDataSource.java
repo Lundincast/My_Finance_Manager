@@ -18,12 +18,12 @@ public class CategoriesDataSource {
 
     // Database fields
     private SQLiteDatabase database;
-    private MySQLiteHelper dbHelper;
-    private String[] allColumns = { MySQLiteHelper.COLUMN_ID,
-        MySQLiteHelper.COLUMN_CATEGORY };
+    private DbSQLiteHelper dbHelper;
+    private String[] allColumns = { DbSQLiteHelper.COLUMN_ID,
+        DbSQLiteHelper.COLUMN_CATEGORY };
 
     public CategoriesDataSource(Context context) {
-        dbHelper = new MySQLiteHelper(context);
+        dbHelper = new DbSQLiteHelper(context);
     }
 
     public void open() throws SQLException {
@@ -36,10 +36,10 @@ public class CategoriesDataSource {
 
     public Category createCategory(String category) {
         ContentValues values = new ContentValues();
-        values.put(MySQLiteHelper.COLUMN_CATEGORY, category);
-        long insertId = database.insert(MySQLiteHelper.TABLE_CATEGORIES, null, values);
-        Cursor cursor = database.query(MySQLiteHelper.TABLE_CATEGORIES,
-                allColumns, MySQLiteHelper.COLUMN_ID + " = " + insertId, null,
+        values.put(DbSQLiteHelper.COLUMN_CATEGORY, category);
+        long insertId = database.insert(DbSQLiteHelper.TABLE_CATEGORIES, null, values);
+        Cursor cursor = database.query(DbSQLiteHelper.TABLE_CATEGORIES,
+                allColumns, DbSQLiteHelper.COLUMN_ID + " = " + insertId, null,
                 null, null, null);
         cursor.moveToFirst();
         Category newCategory = cursorToCategory(cursor);
@@ -49,31 +49,49 @@ public class CategoriesDataSource {
 
     public void updateCategory(Category category) {
         ContentValues values = new ContentValues();
-        values.put(MySQLiteHelper.COLUMN_CATEGORY, category.getName());
-        int updateId = database.update(MySQLiteHelper.TABLE_CATEGORIES, values,
-                                     MySQLiteHelper.COLUMN_ID + " = " + category.getId(), null);
+        values.put(DbSQLiteHelper.COLUMN_CATEGORY, category.getName());
+        int updateId = database.update(DbSQLiteHelper.TABLE_CATEGORIES, values,
+                                     DbSQLiteHelper.COLUMN_ID + " = " + category.getId(), null);
     }
 
     public void deleteCategory(Category category) {
         System.out.println("Category deleted with name: " + category);
-        database.delete(MySQLiteHelper.TABLE_CATEGORIES, MySQLiteHelper.COLUMN_ID
+        database.delete(DbSQLiteHelper.TABLE_CATEGORIES, DbSQLiteHelper.COLUMN_ID
         + " = " + category.getId(), null);
     }
 
     public Category getCategory(long id) {
-        Cursor cursor = database.query(MySQLiteHelper.TABLE_CATEGORIES,
+        Cursor cursor = database.query(DbSQLiteHelper.TABLE_CATEGORIES,
                 allColumns,
-                MySQLiteHelper.COLUMN_ID + " = " + id, null, null, null, null);
+                DbSQLiteHelper.COLUMN_ID + " = " + id, null, null, null, null);
         cursor.moveToFirst();
         Category category = cursorToCategory(cursor);
         cursor.close();
         return category;
     }
 
-    public List<Category> getAllCategories() {
+    public Cursor getAllCategories() {
         List<Category> categories = new ArrayList<Category>();
 
-        Cursor cursor = database.query(MySQLiteHelper.TABLE_CATEGORIES,
+        Cursor cursor = database.query(DbSQLiteHelper.TABLE_CATEGORIES,
+                allColumns, null, null, null, null, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            Category category = cursorToCategory(cursor);
+            categories.add(category);
+            cursor.moveToNext();
+        }
+
+        // Make sure to close the cursor
+        // cursor.close();
+        return cursor;
+    }
+
+    public List<Category> getAllCategoriesList() {
+        List<Category> categories = new ArrayList<Category>();
+
+        Cursor cursor = database.query(DbSQLiteHelper.TABLE_CATEGORIES,
                 allColumns, null, null, null, null, null);
 
         cursor.moveToFirst();

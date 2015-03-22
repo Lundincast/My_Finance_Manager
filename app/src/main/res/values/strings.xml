@@ -31,5 +31,9 @@
     <string name="title_activity_categories">CategoriesActivity</string>
     <string name="title_activity_categories_edit">CategoriesEditActivity</string>
     <string name="title_activity_edit_categories">EditCategoriesActivity</string>
+    <string name="title_activity_list_transactions">ListTransactionsActivity</string>
+    <string name="title_activity_create_transaction">CreateTransactionActivity</string>
+    <string name="title_activity_edit_transaction">EditTransactionActivity</string>
+    <string name="Update">Update</string>
 
 </resources>

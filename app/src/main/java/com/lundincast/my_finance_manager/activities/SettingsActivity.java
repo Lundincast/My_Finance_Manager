@@ -1,21 +1,38 @@
 package com.lundincast.my_finance_manager.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.lundincast.my_finance_manager.R;
 
 public class SettingsActivity extends PreferenceActivity {
 
+    ListPreference currencyPref;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        // set currency preference
+        ListPreference currencyPref = (ListPreference) findPreference("pref_key_currency");
+        String test = sharedPref.getString("pref_key_currency", "1");
+        if (test.equals("2")) {
+            currencyPref.setSummary("Dollar");
+        } else {
+            currencyPref.setSummary("Euro");
+        }
+    //    sharedPref.edit().putString("Currency", currencyPref.getValue()).commit();
+        // set category preference
         Preference categoryPref = (Preference) findPreference("pref_key_categories");
         categoryPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -25,7 +42,22 @@ public class SettingsActivity extends PreferenceActivity {
                 return false;
             }
         });
+
+
+        currencyPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                ListPreference pref = (ListPreference) preference;
+                CharSequence[] values = pref.getEntries();
+                pref.setSummary(values[Integer.parseInt((String) newValue) - 1]);
+                return true;
+            }
+        });
+
+
+
     }
+
 
 
     @Override
@@ -49,4 +81,6 @@ public class SettingsActivity extends PreferenceActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }

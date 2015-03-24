@@ -3,7 +3,11 @@
     <PreferenceCategory
         android:title="@string/pref_general_settings"
         android:key="pref_key_general_settings">
-        <Preference
+        <ListPreference
+            android:entries="@array/currencyentries"
+            android:entryValues="@array/currencyvalues"
+            android:defaultValue="1"
+            android:summary="Euro"
             android:key="pref_key_currency"
             android:title="@string/pref_title_currency" />
     </PreferenceCategory>
@@ -29,6 +33,7 @@
             android:title="@string/pref_title_rate_app" />
         <Preference
             android:key="pref_key_about"
-            android:title="@string/pref_title_about" />
+            android:title="@string/pref_title_about"
+            android:summary="App version 0.1"/>
     </PreferenceCategory>
 </PreferenceScreen>

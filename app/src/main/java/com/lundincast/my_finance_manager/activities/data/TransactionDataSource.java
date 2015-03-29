@@ -82,11 +82,26 @@ public class TransactionDataSource {
         return transaction;
     }
 
+    public Cursor getTransactionsPerCategory(String category) {
+        Cursor cursor;
+        String[] args = new String[] {category};
+        if (category.equals("All")) {
+            cursor = database.query(DbSQLiteHelper.TABLE_TRANSACTIONS,
+                    allColumns, null, null, null, null,
+                    DbSQLiteHelper.TRANSACTION_DATE + " DESC");
+        } else {
+            cursor = database.query(DbSQLiteHelper.TABLE_TRANSACTIONS,
+                    allColumns, DbSQLiteHelper.TRANSACTION_CATEGORY + " =?", args, null, null,
+                    DbSQLiteHelper.TRANSACTION_DATE + " DESC");
+        }
+        return cursor;
+    }
+
     public Cursor getAllTransaction() {
         List<Transaction> transactions = new ArrayList<Transaction>();
 
         Cursor cursor = database.query(DbSQLiteHelper.TABLE_TRANSACTIONS,
-                allColumns, null, null, null, null, null);
+                allColumns, null, null, null, null, DbSQLiteHelper.TRANSACTION_DATE + " DESC");
 
         //cursor.moveToFirst();
         //while (!cursor.isAfterLast()) {

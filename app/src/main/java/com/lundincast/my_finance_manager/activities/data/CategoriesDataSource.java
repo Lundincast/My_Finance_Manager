@@ -88,6 +88,24 @@ public class CategoriesDataSource {
         return cursor;
     }
 
+    public ArrayList<String> getAllCategoriesStringList() {
+
+        ArrayList<String> catList = new ArrayList<String>();
+
+        Cursor cursor = database.query(DbSQLiteHelper.TABLE_CATEGORIES,
+                allColumns, null, null, null, null, DbSQLiteHelper.COLUMN_CATEGORY + " ASC");
+
+        catList.add("All");
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            catList.add(cursor.getString(1));
+            cursor.moveToNext();
+        }
+
+        return catList;
+    }
+
     public List<Category> getAllCategoriesList() {
         List<Category> categories = new ArrayList<Category>();
 

@@ -1,30 +1,35 @@
 package com.lundincast.my_finance_manager.activities;
 
+import android.app.ActionBar;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 
 import com.lundincast.my_finance_manager.R;
+import com.lundincast.my_finance_manager.activities.data.CategoriesDataSource;
 import com.lundincast.my_finance_manager.activities.data.DbSQLiteHelper;
+import com.lundincast.my_finance_manager.activities.data.TransactionCursorAdapter;
 import com.lundincast.my_finance_manager.activities.data.TransactionDataSource;
-import com.lundincast.my_finance_manager.activities.model.Category;
-import com.lundincast.my_finance_manager.activities.model.Transaction;
 
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.List;
+import java.util.ArrayList;
 
 public class ListTransactionsActivity extends ListActivity {
 
     private TransactionDataSource datasource;
+    private CategoriesDataSource catDatasource;
+    private Cursor cursor;
+    TransactionCursorAdapter adapter;
+
+    ArrayList<String> catFilter;
 
 
     @Override
@@ -37,23 +42,49 @@ public class ListTransactionsActivity extends ListActivity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        catDatasource = new CategoriesDataSource(this);
+        try {
+            catDatasource.open();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-        Cursor cursor = datasource.getAllTransaction();
+        catFilter = catDatasource.getAllCategoriesStringList();
+
+        //******************************************************************************************
+        ArrayAdapter<String> adapterFilter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, catFilter);
+        getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        ActionBar.OnNavigationListener navigationListener = new ActionBar.OnNavigationListener() {
+            @Override
+            public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+                Cursor newCursor = ListTransactionsActivity.this.datasource.getTransactionsPerCategory(catFilter.get(itemPosition));
+                ListTransactionsActivity.this.adapter.swapCursor(newCursor);
+                return false;
+            }
+        };
+        getActionBar().setListNavigationCallbacks(adapterFilter, navigationListener);
+        //******************************************************************************************
+        cursor = datasource.getAllTransaction();
         startManagingCursor(cursor);
 
+
+
         // The desired columns to be bound
-        String[] columns = new String[] {cursor.getColumnName(1), cursor.getColumnName(3), cursor.getColumnName(4)};
-        // The xml defined views which the data will be bound to
-        int[] to = new int[] {R.id.transaction_price, R.id.name_entry, R.id.comment_entry};
+//        String[] columns = new String[] {cursor.getColumnName(1), cursor.getColumnName(3), cursor.getColumnName(4)};
+//        // The xml defined views which the data will be bound to
+//        int[] to = new int[] {R.id.transaction_price, R.id.name_entry, R.id.comment_entry};
+//
+//        final SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
+//                R.layout.activity_list_transactions_entry,
+//                datasource.getAllTransaction(),
+//                columns,
+//                to);
+//        this.setListAdapter(adapter);
 
-        final SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
-                R.layout.activity_list_transactions_entry,
-                datasource.getAllTransaction(),
-                columns,
-                to);
-        this.setListAdapter(adapter);
-
+        adapter = new TransactionCursorAdapter(this, cursor);
         ListView lv = getListView();
+        lv.setAdapter(adapter);
+
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -110,6 +141,8 @@ public class ListTransactionsActivity extends ListActivity {
             startActivity(intent);
         }
 
+
         return super.onOptionsItemSelected(item);
     }
+
 }

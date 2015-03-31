@@ -11,4 +11,17 @@
         <item>2</item>
     </string-array>
 
+    <string-array name="colors_array">
+        <item>Red</item>
+        <item>Blue</item>
+        <item>Yellow</item>
+        <item>Green</item>
+        <item>Black</item>
+        <item>White</item>
+        <item>Pink</item>
+        <item>Brown</item>
+        <item>Purple</item>
+        <item>Orange</item>
+    </string-array>
+    
 </resources>

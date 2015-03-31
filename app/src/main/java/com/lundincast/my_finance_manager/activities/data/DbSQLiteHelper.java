@@ -22,6 +22,7 @@ public class DbSQLiteHelper extends SQLiteOpenHelper {
     // Categories table columns names
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_CATEGORY = "category";
+    public static final String COLUMN_COLOR = "color";
     // Transactions table columns names
     public static final String TRANSACTION_ID = "_id";
     public static final String TRANSACTION_PRICE = "price";
@@ -33,7 +34,8 @@ public class DbSQLiteHelper extends SQLiteOpenHelper {
     // Category database creation sql statement
     private static final String DATABASE_CREATE_CATEGORIES = "create table "
             + TABLE_CATEGORIES + "(" + COLUMN_ID + " integer primary key autoincrement, "
-                                     + COLUMN_CATEGORY + " text not null);";
+                                     + COLUMN_CATEGORY + " text not null, "
+                                     + COLUMN_COLOR + " text not null);";
 
     // Transaction database creation sql statement
     private static final String DATABASE_CREATE_TRANSACTIONS = "create table "

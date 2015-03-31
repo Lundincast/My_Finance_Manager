@@ -6,16 +6,22 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.lundincast.my_finance_manager.R;
 import com.lundincast.my_finance_manager.activities.data.CategoriesDataSource;
+import com.lundincast.my_finance_manager.activities.model.Category;
 
 import java.sql.SQLException;
 
-public class CreateCategoriesActivity extends ActionBarActivity {
+public class CreateCategoriesActivity extends ActionBarActivity implements AdapterView.OnItemSelectedListener {
 
     private CategoriesDataSource datasource;
+    private String color;
 
     private static final String TAG = "ListCategoriesActivity";
 
@@ -30,8 +36,29 @@ public class CreateCategoriesActivity extends ActionBarActivity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        Spinner spinner = (Spinner) findViewById(R.id.category_color);
+        // create an ArrayAdapter using the colors string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                                                                R.array.colors_array,
+                                                                android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
     }
 
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        color = (String) parent.getItemAtPosition(position);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
 
 
     @Override
@@ -68,7 +95,7 @@ public class CreateCategoriesActivity extends ActionBarActivity {
         if (id == R.id.action_new) {
                 final EditText categoryName = (EditText) findViewById(R.id.category_name);
                 String category = categoryName.getText().toString();
-                datasource.createCategory(category);
+                datasource.createCategory(category, color);
                 Intent intent = new Intent(this, ListCategoriesActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
@@ -76,4 +103,6 @@ public class CreateCategoriesActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }

@@ -20,7 +20,7 @@ public class CategoriesDataSource {
     private SQLiteDatabase database;
     private DbSQLiteHelper dbHelper;
     private String[] allColumns = { DbSQLiteHelper.COLUMN_ID,
-        DbSQLiteHelper.COLUMN_CATEGORY };
+        DbSQLiteHelper.COLUMN_CATEGORY, DbSQLiteHelper.COLUMN_COLOR };
 
     public CategoriesDataSource(Context context) {
         dbHelper = new DbSQLiteHelper(context);
@@ -34,9 +34,10 @@ public class CategoriesDataSource {
         dbHelper.close();
     }
 
-    public Category createCategory(String category) {
+    public Category createCategory(String category, String color) {
         ContentValues values = new ContentValues();
         values.put(DbSQLiteHelper.COLUMN_CATEGORY, category);
+        values.put(DbSQLiteHelper.COLUMN_COLOR, color);
         long insertId = database.insert(DbSQLiteHelper.TABLE_CATEGORIES, null, values);
         Cursor cursor = database.query(DbSQLiteHelper.TABLE_CATEGORIES,
                 allColumns, DbSQLiteHelper.COLUMN_ID + " = " + insertId, null,
@@ -50,6 +51,7 @@ public class CategoriesDataSource {
     public void updateCategory(Category category) {
         ContentValues values = new ContentValues();
         values.put(DbSQLiteHelper.COLUMN_CATEGORY, category.getName());
+        values.put(DbSQLiteHelper.COLUMN_COLOR, category.getColor());
         int updateId = database.update(DbSQLiteHelper.TABLE_CATEGORIES, values,
                                      DbSQLiteHelper.COLUMN_ID + " = " + category.getId(), null);
     }
@@ -128,6 +130,7 @@ public class CategoriesDataSource {
         Category category = new Category();
         category.setId(cursor.getLong(0));
         category.setName(cursor.getString(1));
+        category.setColor(cursor.getString(2));
         return category;
     }
 }

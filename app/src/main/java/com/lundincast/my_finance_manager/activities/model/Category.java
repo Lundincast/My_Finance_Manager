@@ -7,6 +7,7 @@ public class Category {
 
     private long id;
     private String name;
+    private String color;
 
     public long getId() {
         return id;
@@ -22,6 +23,14 @@ public class Category {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 
     // Will be used by the ArrayAdapter in the ListView

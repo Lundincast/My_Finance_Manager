@@ -8,7 +8,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 
 import com.lundincast.my_finance_manager.R;
 import com.lundincast.my_finance_manager.activities.data.CategoriesDataSource;
@@ -16,16 +20,19 @@ import com.lundincast.my_finance_manager.activities.model.Category;
 
 import java.sql.SQLException;
 
-public class EditCategoriesActivity extends ActionBarActivity {
+public class EditCategoriesActivity extends ActionBarActivity implements AdapterView.OnItemSelectedListener {
 
     private CategoriesDataSource datasource;
     private Category category;
+    private String color;
+    private Spinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_categories);
         EditText text = (EditText) findViewById(R.id.category_name);
+        spinner = (Spinner) findViewById(R.id.category_color);
 
         datasource = new CategoriesDataSource(this);
         try {
@@ -34,7 +41,7 @@ public class EditCategoriesActivity extends ActionBarActivity {
             e.printStackTrace();
         }
 
-        // retrieve item data from intent and displays it in EditText
+        // retrieve item data from intent and displays it in EditText and spinner
         Intent incomingIntent = getIntent();
         Bundle extras = incomingIntent.getExtras();
         if (extras != null)
@@ -42,7 +49,26 @@ public class EditCategoriesActivity extends ActionBarActivity {
             long id = extras.getLong("categoryId");
             this.category = datasource.getCategory(id);
             text.setText((CharSequence) category.getName());
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                                                                    R.array.colors_array,
+                                                                    android.R.layout.simple_spinner_item);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            int spinnerPosition = adapter.getPosition(category.getColor());
+            spinner.setAdapter(adapter);
+            spinner.setSelection(spinnerPosition);
+            spinner.setOnItemSelectedListener(this);
         }
+    }
+
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        color = (String) parent.getItemAtPosition(position);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 
 
@@ -86,6 +112,7 @@ public class EditCategoriesActivity extends ActionBarActivity {
         if (id == R.id.accept_action) {
             final EditText categoryName = (EditText) findViewById(R.id.category_name);
             category.setName(categoryName.getText().toString());
+            category.setColor(spinner.getSelectedItem().toString());
             datasource.updateCategory(category);
             Intent intent = new Intent(getApplicationContext(), ListCategoriesActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -94,4 +121,6 @@ public class EditCategoriesActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }

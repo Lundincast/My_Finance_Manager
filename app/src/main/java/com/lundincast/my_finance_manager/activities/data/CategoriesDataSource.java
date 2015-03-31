@@ -22,6 +22,7 @@ public class CategoriesDataSource {
     private String[] allColumns = { DbSQLiteHelper.COLUMN_ID,
         DbSQLiteHelper.COLUMN_CATEGORY, DbSQLiteHelper.COLUMN_COLOR };
 
+
     public CategoriesDataSource(Context context) {
         dbHelper = new DbSQLiteHelper(context);
     }
@@ -66,6 +67,17 @@ public class CategoriesDataSource {
         Cursor cursor = database.query(DbSQLiteHelper.TABLE_CATEGORIES,
                 allColumns,
                 DbSQLiteHelper.COLUMN_ID + " = " + id, null, null, null, null);
+        cursor.moveToFirst();
+        Category category = cursorToCategory(cursor);
+        cursor.close();
+        return category;
+    }
+
+    public Category getCategoryByName(String name) {
+        String[] nameArg = new String[]{name};
+        Cursor cursor = database.query(DbSQLiteHelper.TABLE_CATEGORIES,
+                allColumns,
+                DbSQLiteHelper.COLUMN_CATEGORY + " =?", nameArg, null, null, null);
         cursor.moveToFirst();
         Category category = cursorToCategory(cursor);
         cursor.close();

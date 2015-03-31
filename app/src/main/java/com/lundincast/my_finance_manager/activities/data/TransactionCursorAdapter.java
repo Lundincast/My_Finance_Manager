@@ -3,6 +3,7 @@ package com.lundincast.my_finance_manager.activities.data;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +13,17 @@ import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.lundincast.my_finance_manager.R;
+import com.lundincast.my_finance_manager.activities.model.Category;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  * Created by lundincast on 28/03/15.
  */
 public class TransactionCursorAdapter extends CursorAdapter implements Filterable {
+
+    private CategoriesDataSource dataSource;
 
     public TransactionCursorAdapter(Context context, Cursor cursor) {
 
@@ -51,6 +58,28 @@ public class TransactionCursorAdapter extends CursorAdapter implements Filterabl
         // Populate fields with extracted properties
         String firstLetter = category.substring(0, 1).toUpperCase();
         categoryIconTv.setText(firstLetter);
+        // find color to be displayed
+        dataSource = new CategoriesDataSource(context);
+        try {
+            dataSource.open();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        Category catObj = dataSource.getCategoryByName(category);
+        dataSource.close();
+        String color = catObj.getColor();
+        String[] colorsArray =  context.getResources().getStringArray(R.array.colors_array);
+        String[] colorValue = context.getResources().getStringArray(R.array.colors_value);
+
+        int it = 0;
+        for (String s: colorsArray) {
+            if (s.equals(color)) {
+                color = colorValue[it];
+                break;
+            }
+            it++;
+        }
+        categoryIconTv.setBackgroundColor(Color.parseColor(color));
         dateTv.setText(date);
         commentTv.setText(comment);
         // get preferences for currency display

@@ -23,5 +23,18 @@
         <item>Purple</item>
         <item>Orange</item>
     </string-array>
+
+    <string-array name="colors_value">
+        <item>#CC0000</item>
+        <item>#00B9E4</item>
+        <item>#F8E828</item>
+        <item>#92B83E</item>
+        <item>#000000</item>
+        <item>#FFFFFF</item>
+        <item>#E879A4</item>
+        <item>#775530</item>
+        <item>#7E0B80</item>
+        <item>#FF6600</item>
+    </string-array>
     
 </resources>

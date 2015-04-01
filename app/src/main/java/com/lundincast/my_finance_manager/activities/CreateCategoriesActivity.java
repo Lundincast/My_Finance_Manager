@@ -1,6 +1,5 @@
 package com.lundincast.my_finance_manager.activities;
 
-import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -14,7 +13,6 @@ import android.widget.Spinner;
 
 import com.lundincast.my_finance_manager.R;
 import com.lundincast.my_finance_manager.activities.data.CategoriesDataSource;
-import com.lundincast.my_finance_manager.activities.model.Category;
 
 import java.sql.SQLException;
 
@@ -47,6 +45,8 @@ public class CreateCategoriesActivity extends ActionBarActivity implements Adapt
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
+
+
     }
 
 

@@ -90,13 +90,6 @@ public class CategoriesDataSource {
         Cursor cursor = database.query(DbSQLiteHelper.TABLE_CATEGORIES,
                 allColumns, null, null, null, null, null);
 
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            Category category = cursorToCategory(cursor);
-            categories.add(category);
-            cursor.moveToNext();
-        }
-
         // Make sure to close the cursor
         // cursor.close();
         return cursor;

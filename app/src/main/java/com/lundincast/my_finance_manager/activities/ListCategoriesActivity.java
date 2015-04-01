@@ -1,44 +1,27 @@
 package com.lundincast.my_finance_manager.activities;
 
 import android.app.ListActivity;
-import android.app.LoaderManager;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import com.lundincast.my_finance_manager.R;
 import com.lundincast.my_finance_manager.activities.data.CategoriesDataSource;
-import com.lundincast.my_finance_manager.activities.model.Category;
+import com.lundincast.my_finance_manager.activities.data.CategoryCursorAdapter;
+import com.lundincast.my_finance_manager.activities.data.DbSQLiteHelper;
 
 import java.sql.SQLException;
-import java.util.List;
-
-import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.Toast;
 
 public class ListCategoriesActivity extends ListActivity {
 
     private CategoriesDataSource datasource;
-
-    ArrayAdapter<Category> mAdapterOld;
-
-    // These are the Contacts rows that we will retrieve
-    //static final String[] PROJECTION = new String[] {ContactsContract.Data._ID,
-    //        ContactsContract.Data.DISPLAY_NAME};
-
-    // This is the select criteria
-    //static final String SELECTION = "((" +
-    //        ContactsContract.Data.DISPLAY_NAME + " NOTNULL) AND (" +
-    //        ContactsContract.Data.DISPLAY_NAME + " != '' ))";
+    private CategoryCursorAdapter adapter;
 
 
     private static final String TAG = "ListCategoriesActivity";
@@ -53,33 +36,30 @@ public class ListCategoriesActivity extends ListActivity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        List<Category> values = datasource.getAllCategoriesList();
+        final Cursor cursor = datasource.getAllCategories();
 
-        // use the SimpleCursorAdapter to show the
-        // elements in a ListView
-        final ArrayAdapter<Category> adapter = new ArrayAdapter<Category>(this,
-                R.layout.categories_list, R.id.TextView01, values);
-
+        // Use the custom adapter to populate the listview
+        adapter = new CategoryCursorAdapter(this, cursor);
         setListAdapter(adapter);
         ListView lv = getListView();
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Category selected = adapter.getItem(position);
+                Cursor cursor = (Cursor) adapter.getItem(position);
+                long categoryId = cursor.getLong(cursor.getColumnIndexOrThrow(DbSQLiteHelper.COLUMN_ID));
                 Intent editIntent = new Intent(getApplicationContext(), EditCategoriesActivity.class);
-                editIntent.putExtra("categoryId", selected.getId());
+                editIntent.putExtra("categoryId", categoryId);
                 startActivityForResult(editIntent, 2);
             }
         });
-        this.mAdapterOld = adapter;
 
     }
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mAdapterOld = null;
-        mAdapterOld = (ArrayAdapter<Category>) getListAdapter();
+        //mAdapterOld = null;
+        //mAdapterOld = (ArrayAdapter<Category>) getListAdapter();
 
         Toast toast = Toast.makeText(getApplicationContext(), "New category created", Toast.LENGTH_SHORT);
         toast.show();
@@ -119,6 +99,7 @@ public class ListCategoriesActivity extends ListActivity {
         if (id == R.id.action_new) {
             Intent editIntent = new Intent(this, CreateCategoriesActivity.class);
             startActivityForResult(editIntent, 1);
+
         }
 
         return super.onOptionsItemSelected(item);

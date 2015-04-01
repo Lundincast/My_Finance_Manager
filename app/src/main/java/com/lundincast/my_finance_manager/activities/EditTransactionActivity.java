@@ -9,7 +9,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,11 +19,11 @@ import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.lundincast.my_finance_manager.R;
 import com.lundincast.my_finance_manager.activities.data.CategoriesDataSource;
+import com.lundincast.my_finance_manager.activities.data.CategoryCursorAdapter;
 import com.lundincast.my_finance_manager.activities.data.DbSQLiteHelper;
 import com.lundincast.my_finance_manager.activities.data.TransactionDataSource;
 import com.lundincast.my_finance_manager.activities.interfaces.TheListener;
@@ -41,6 +40,7 @@ public class EditTransactionActivity extends ListActivity implements TheListener
     private Transaction transaction;
     TextView priceTextView;
     String selectedCategory;
+    private CategoryCursorAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,14 +91,7 @@ public class EditTransactionActivity extends ListActivity implements TheListener
         // get categories list cursor
         Cursor cursor = categoryDatasource.getAllCategories();
 
-        // the desired columns to be bound
-        String[] columns = new String[] {DbSQLiteHelper.COLUMN_CATEGORY};
-        // The XML defined views which the data will be bound to
-        int[] to = new int[] {R.id.category_name};
-
-        final SimpleCursorAdapter adapter = new SimpleCursorAdapter(getApplicationContext(),
-                R.layout.activity_create_transaction_category_list_entry,
-                cursor, columns, to, 0);
+        adapter = new CategoryCursorAdapter(this, cursor);
         setListAdapter(adapter);
 
         ListView lv = getListView();
@@ -156,6 +149,27 @@ public class EditTransactionActivity extends ListActivity implements TheListener
         newFragment.show(getFragmentManager(), "datePicker");
     }
 
+    @Override
+    protected void onResume() {
+        try {
+            categoryDatasource.open();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            transactionDatasource.open();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        categoryDatasource.close();
+        transactionDatasource.close();
+        super.onPause();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.lundincast.my_finance_manager.R;
 import com.lundincast.my_finance_manager.activities.data.CategoriesDataSource;
@@ -67,20 +66,6 @@ public class ListTransactionsActivity extends ListActivity {
         cursor = datasource.getAllTransaction();
         startManagingCursor(cursor);
 
-
-
-        // The desired columns to be bound
-//        String[] columns = new String[] {cursor.getColumnName(1), cursor.getColumnName(3), cursor.getColumnName(4)};
-//        // The xml defined views which the data will be bound to
-//        int[] to = new int[] {R.id.transaction_price, R.id.name_entry, R.id.comment_entry};
-//
-//        final SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
-//                R.layout.activity_list_transactions_entry,
-//                datasource.getAllTransaction(),
-//                columns,
-//                to);
-//        this.setListAdapter(adapter);
-
         adapter = new TransactionCursorAdapter(this, cursor);
         ListView lv = getListView();
         lv.setAdapter(adapter);
@@ -97,6 +82,8 @@ public class ListTransactionsActivity extends ListActivity {
                 startActivityForResult(editIntent, 2);
             }
         });
+
+
 
     }
 

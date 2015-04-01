@@ -9,27 +9,23 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.CursorAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.lundincast.my_finance_manager.R;
 import com.lundincast.my_finance_manager.activities.data.CategoriesDataSource;
+import com.lundincast.my_finance_manager.activities.data.CategoryCursorAdapter;
 import com.lundincast.my_finance_manager.activities.data.DbSQLiteHelper;
 import com.lundincast.my_finance_manager.activities.data.TransactionDataSource;
 import com.lundincast.my_finance_manager.activities.interfaces.TheListener;
-import com.lundincast.my_finance_manager.activities.model.Category;
 import com.lundincast.my_finance_manager.activities.model.Transaction;
 
 import java.sql.SQLException;
@@ -42,6 +38,7 @@ public class CreateTransactionActivity extends ListActivity implements TheListen
     private TransactionDataSource transacDatasource;
     TextView transactionPrice;
     String selectedCategory;
+    private CategoryCursorAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,14 +61,7 @@ public class CreateTransactionActivity extends ListActivity implements TheListen
         // Get Categories list cursor
         Cursor cursor = datasource.getAllCategories();
 
-        // the desired columns to be bound
-        String[] columns = new String[] {DbSQLiteHelper.COLUMN_CATEGORY};
-        // The XML defined views which the data will be bound to
-        int[] to = new int[] {R.id.category_name};
-
-        final SimpleCursorAdapter adapter = new SimpleCursorAdapter(getApplicationContext(),
-                                                            R.layout.activity_create_transaction_category_list_entry,
-                                                            cursor, columns, to, 0);
+        adapter = new CategoryCursorAdapter(this, cursor);
         setListAdapter(adapter);
 
         transactionPrice = (TextView) findViewById(R.id.transaction_price);
@@ -141,6 +131,27 @@ public class CreateTransactionActivity extends ListActivity implements TheListen
     }
 
 
+    @Override
+    protected void onResume() {
+        try {
+            datasource.open();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            transacDatasource.open();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        datasource.close();
+        transacDatasource.close();
+        super.onPause();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

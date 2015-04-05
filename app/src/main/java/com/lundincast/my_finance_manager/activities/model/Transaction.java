@@ -10,10 +10,10 @@ public class Transaction{
     private long id;
     private double price;
     private String category;
-    private String date;
+    private Date date;
     private String comment;
 
-    public Transaction(long id, double price, String category, String date, String comment) {
+    public Transaction(long id, double price, String category, Date date, String comment) {
         this.id = id;
         this.price = price;
         this.category = category;
@@ -21,7 +21,7 @@ public class Transaction{
         this.comment = comment;
     }
 
-    public Transaction(short price, String category, String date, String comment) {
+    public Transaction(short price, String category, Date date, String comment) {
         this.price = price;
         this.category = category;
         this.date = date;
@@ -56,11 +56,11 @@ public class Transaction{
         this.category = category;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

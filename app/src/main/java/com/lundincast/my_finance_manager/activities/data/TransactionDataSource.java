@@ -1,21 +1,17 @@
 package com.lundincast.my_finance_manager.activities.data;
 
-import android.app.ListActivity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.google.gson.Gson;
-import com.lundincast.my_finance_manager.activities.model.Category;
 import com.lundincast.my_finance_manager.activities.model.Transaction;
 
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by lundincast on 1/03/15.
@@ -46,8 +42,12 @@ public class TransactionDataSource {
     public void createTransaction(Transaction transaction) {
         ContentValues values = new ContentValues();
         values.put(DbSQLiteHelper.TRANSACTION_PRICE, transaction.getPrice());
-        values.put(DbSQLiteHelper.TRANSACTION_CATEGORY, transaction.getCategory().toString());
-        values.put(DbSQLiteHelper.TRANSACTION_DATE, transaction.getDate().toString());
+        values.put(DbSQLiteHelper.TRANSACTION_CATEGORY, transaction.getCategory());
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(transaction.getDate());
+        values.put(DbSQLiteHelper.TRANSACTION_DATE, transaction.getDate().getTime());
+        values.put(DbSQLiteHelper.TRANSACTION_MONTH, cal.get(Calendar.MONTH));
+        values.put(DbSQLiteHelper.TRANSACTION_YEAR, cal.get(Calendar.YEAR));
         values.put(DbSQLiteHelper.TRANSACTION_COMMENT, transaction.getComment());
         long insertId = database.insert(DbSQLiteHelper.TABLE_TRANSACTIONS, null, values);
 //        Cursor cursor = database.query(DbSQLiteHelper.TABLE_TRANSACTIONS,
@@ -61,8 +61,12 @@ public class TransactionDataSource {
     public void updateTransaction(Transaction transaction) {
         ContentValues values = new ContentValues();
         values.put(DbSQLiteHelper.TRANSACTION_PRICE, transaction.getPrice());
-        values.put(DbSQLiteHelper.TRANSACTION_CATEGORY, transaction.getCategory().toString());
-        values.put(DbSQLiteHelper.TRANSACTION_DATE, transaction.getDate().toString());
+        values.put(DbSQLiteHelper.TRANSACTION_CATEGORY, transaction.getCategory());
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(transaction.getDate());
+        values.put(DbSQLiteHelper.TRANSACTION_DATE, transaction.getDate().getTime());
+        values.put(DbSQLiteHelper.TRANSACTION_MONTH, cal.get(Calendar.MONTH));
+        values.put(DbSQLiteHelper.TRANSACTION_YEAR, cal.get(Calendar.YEAR));
         values.put(DbSQLiteHelper.TRANSACTION_COMMENT, transaction.getComment());
         int updateId = database.update(DbSQLiteHelper.TABLE_TRANSACTIONS, values,
                                     DbSQLiteHelper.TRANSACTION_ID + " = " + transaction.getId(), null);
@@ -126,7 +130,8 @@ public class TransactionDataSource {
         long id = cursor.getLong(idIndex);
         short price = cursor.getShort(priceIndex);
         String category = cursor.getString(categoryIndex);
-        String date = cursor.getString(dateIndex);
+        long dateInt = cursor.getLong(dateIndex);
+        Date date = new Date(dateInt);
         String comment = cursor.getString(commentIndex);
 
         // populate new Transaction object

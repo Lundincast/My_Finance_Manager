@@ -28,6 +28,8 @@ public class DbSQLiteHelper extends SQLiteOpenHelper {
     public static final String TRANSACTION_PRICE = "price";
     public static final String TRANSACTION_CATEGORY = "category";
     public static final String TRANSACTION_DATE = "date";
+    public static final String TRANSACTION_MONTH = "month";
+    public static final String TRANSACTION_YEAR = "year";
     public static final String TRANSACTION_COMMENT = "comment";
 
 
@@ -40,9 +42,11 @@ public class DbSQLiteHelper extends SQLiteOpenHelper {
     // Transaction database creation sql statement
     private static final String DATABASE_CREATE_TRANSACTIONS = "create table "
             + TABLE_TRANSACTIONS + "(" + TRANSACTION_ID + " integer primary key autoincrement, "
-                                       + TRANSACTION_PRICE + " text not null, "
+                                       + TRANSACTION_PRICE + " real not null, "
                                        + TRANSACTION_CATEGORY + " text not null, "
-                                       + TRANSACTION_DATE + " string not null, "
+                                       + TRANSACTION_DATE + " int not null, "
+                                       + TRANSACTION_MONTH + " int not null, "
+                                       + TRANSACTION_YEAR + " int not null, "
                                        + TRANSACTION_COMMENT + " text not null);";
 
     public DbSQLiteHelper(Context context) {

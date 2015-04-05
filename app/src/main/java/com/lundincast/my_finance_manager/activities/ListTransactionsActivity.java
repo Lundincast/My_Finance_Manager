@@ -23,6 +23,9 @@ import java.util.ArrayList;
 
 public class ListTransactionsActivity extends ListActivity {
 
+    // TODO implement expandable ListView
+    // TODO implement color change animation on category sorting
+
     private TransactionDataSource datasource;
     private CategoriesDataSource catDatasource;
     private Cursor cursor;
@@ -47,6 +50,7 @@ public class ListTransactionsActivity extends ListActivity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
 
         catFilter = catDatasource.getAllCategoriesStringList();
 

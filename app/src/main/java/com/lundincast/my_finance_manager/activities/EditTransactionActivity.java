@@ -30,16 +30,19 @@ import com.lundincast.my_finance_manager.activities.interfaces.TheListener;
 import com.lundincast.my_finance_manager.activities.model.Transaction;
 
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class EditTransactionActivity extends ListActivity implements TheListener {
+
+    // TODO implement activity transitions
 
     private CategoriesDataSource categoryDatasource;
     private TransactionDataSource transactionDatasource;
     private Transaction transaction;
-    TextView priceTextView;
-    String selectedCategory;
+    private TextView priceTextView;
+    private String selectedCategory;
+    private Date selectedDate;
     private CategoryCursorAdapter adapter;
 
     @Override
@@ -73,8 +76,17 @@ public class EditTransactionActivity extends ListActivity implements TheListener
         priceTextView = (TextView) findViewById(R.id.transaction_price);
         priceTextView.setText(Short.toString((short) transaction.getPrice()) + " €");
         selectedCategory = transaction.getCategory();
+
         EditText dateEditText = (EditText) findViewById(R.id.transaction_date);
-        dateEditText.setText(transaction.getDate());
+        String[] days = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+        String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(transaction.getDate().getTime());
+        dateEditText.setText(days[cal.get(Calendar.DAY_OF_WEEK) - 1] + ", "
+                + Integer.toString(cal.get(Calendar.DAY_OF_MONTH)) + " "
+                + months[cal.get(Calendar.MONTH)] + " "
+                + Integer.toString(cal.get(Calendar.YEAR)));
+
         EditText commentEditText = (EditText) findViewById(R.id.transaction_comment);
         commentEditText.setText(transaction.getComment());
 
@@ -211,17 +223,15 @@ public class EditTransactionActivity extends ListActivity implements TheListener
         if (id == R.id.update_action) {
             // retrieve transaction input
             final TextView transactionPrice = (TextView) findViewById(R.id.transaction_price);
-            final EditText transactionDate = (EditText) findViewById(R.id.transaction_date);
             final EditText transactionComment = (EditText) findViewById(R.id.transaction_comment);
 
             String transacPriceString = transactionPrice.getText().toString();
             transacPriceString = transacPriceString.substring(0, transacPriceString.length() - 2);
             short transacPrice = Short.parseShort(transacPriceString);
-            String transacDate = transactionDate.getText().toString();
             String transacComment = transactionComment.getText().toString();
 
             Transaction transaction = new Transaction(this.transaction.getId(),
-                    transacPrice, selectedCategory, transacDate, transacComment);
+                    transacPrice, selectedCategory, selectedDate, transacComment);
             transactionDatasource.updateTransaction(transaction);
 
             Intent intent = new Intent(this, ListTransactionsActivity.class);
@@ -233,9 +243,17 @@ public class EditTransactionActivity extends ListActivity implements TheListener
     }
 
     @Override
-    public void returnDate(String date) {
+    public void returnDate(Date date) {
+        String[] days = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+        String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(date.getTime());
         EditText transactionDate = (EditText) findViewById(R.id.transaction_date);
-        transactionDate.setText(date);
+        transactionDate.setText(days[cal.get(Calendar.DAY_OF_WEEK) - 1] + ", "
+                + Integer.toString(cal.get(Calendar.DAY_OF_MONTH)) + " "
+                + months[cal.get(Calendar.MONTH)] + " "
+                + Integer.toString(cal.get(Calendar.YEAR)));
+        this.selectedDate = date;
     }
 
     // Inner class for creating the DatePickerFragment displayed for choosing date
@@ -264,11 +282,10 @@ public class EditTransactionActivity extends ListActivity implements TheListener
 
             Calendar c = Calendar.getInstance();
             c.set(year, monthOfYear, dayOfMonth);
+            Date date = c.getTime();
 
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            String formattedDate = sdf.format(c.getTime());
             if (listener != null) {
-                listener.returnDate(formattedDate);
+                listener.returnDate(date);
             }
         }
     }

@@ -16,7 +16,7 @@ import com.lundincast.my_finance_manager.R;
 import com.lundincast.my_finance_manager.activities.model.Category;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by lundincast on 28/03/15.
@@ -51,7 +51,7 @@ public class TransactionCursorAdapter extends CursorAdapter implements Filterabl
 
         // Extract properties from cursor
         String category = cursor.getString(cursor.getColumnIndexOrThrow(DbSQLiteHelper.TRANSACTION_CATEGORY));
-        String date = cursor.getString(cursor.getColumnIndexOrThrow(DbSQLiteHelper.TRANSACTION_DATE));
+        long date = cursor.getLong(cursor.getColumnIndexOrThrow(DbSQLiteHelper.TRANSACTION_DATE));
         String comment = cursor.getString(cursor.getColumnIndexOrThrow(DbSQLiteHelper.TRANSACTION_COMMENT));
         double price = cursor.getDouble(cursor.getColumnIndexOrThrow(DbSQLiteHelper.TRANSACTION_PRICE));
 
@@ -80,7 +80,17 @@ public class TransactionCursorAdapter extends CursorAdapter implements Filterabl
             it++;
         }
         categoryIconTv.setBackgroundColor(Color.parseColor(color));
-        dateTv.setText(date);
+
+        String[] days = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+        String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(date);
+        dateTv.setText(days[cal.get(Calendar.DAY_OF_WEEK) - 1] + ", "
+                                    + Integer.toString(cal.get(Calendar.DAY_OF_MONTH)) + " "
+                                    + months[cal.get(Calendar.MONTH)] + " "
+                                    + Integer.toString(cal.get(Calendar.YEAR)));
+
+
         commentTv.setText(comment);
         // get preferences for currency display
         // TODO ListTransactionActivity needs to be refreshed after currency preferences is changed so that this adapter is updated as well
@@ -90,7 +100,9 @@ public class TransactionCursorAdapter extends CursorAdapter implements Filterabl
         if (currPref.equals("2")) {
             priceTv.setText(Double.toString(price) + " $");
         } else {
-            priceTv.setText(Double.toString(price) + " €");        }
+            priceTv.setText(Double.toString(price) + " €");
+        }
+
 
     }
 

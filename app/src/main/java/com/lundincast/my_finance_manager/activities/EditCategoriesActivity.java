@@ -21,6 +21,8 @@ import java.sql.SQLException;
 
 public class EditCategoriesActivity extends ActionBarActivity implements AdapterView.OnItemSelectedListener {
 
+    // TODO implement proper actionBar
+
     private CategoriesDataSource datasource;
     private Category category;
     private String color;

@@ -31,13 +31,15 @@ import com.lundincast.my_finance_manager.activities.model.Transaction;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class CreateTransactionActivity extends ListActivity implements TheListener {
 
     private CategoriesDataSource datasource;
     private TransactionDataSource transacDatasource;
-    TextView transactionPrice;
-    String selectedCategory;
+    private TextView transactionPrice;
+    private String selectedCategory;
+    private Date selectedDate;
     private CategoryCursorAdapter adapter;
 
     @Override
@@ -81,6 +83,11 @@ public class CreateTransactionActivity extends ListActivity implements TheListen
                 CreateTransactionActivity.this.selectedCategory = category;
             }
         });
+
+        // Set date to today by default
+        EditText dateEditText = (EditText) findViewById(R.id.transaction_date);
+        dateEditText.setText("Today");
+        this.selectedDate = new Date();
 
         // Launch dialog on create
         launchDialog();
@@ -171,16 +178,14 @@ public class CreateTransactionActivity extends ListActivity implements TheListen
         if (id == R.id.action_create) {
             // retrieve transaction input
             final TextView transactionPrice = (TextView) findViewById(R.id.transaction_price);
-            final EditText transactionDate = (EditText) findViewById(R.id.transaction_date);
             final EditText transactionComment = (EditText) findViewById(R.id.transaction_comment);
 
             String transacPriceString = transactionPrice.getText().toString();
             transacPriceString = transacPriceString.substring(0, transacPriceString.length() - 2);
             short transacPrice = Short.parseShort(transacPriceString);
-            String transacDate = transactionDate.getText().toString();
             String transacComment = transactionComment.getText().toString();
 
-            Transaction transaction = new Transaction(transacPrice, selectedCategory, transacDate, transacComment);
+            Transaction transaction = new Transaction(transacPrice, selectedCategory, selectedDate, transacComment);
             transacDatasource.createTransaction(transaction);
 
             Intent intent = new Intent(this, ListTransactionsActivity.class);
@@ -192,9 +197,11 @@ public class CreateTransactionActivity extends ListActivity implements TheListen
     }
 
     @Override
-    public void returnDate(String date) {
+    public void returnDate(Date date) {
         EditText transactionDate = (EditText) findViewById(R.id.transaction_date);
-        transactionDate.setText(date);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        transactionDate.setText(sdf.format(date));
+        this.selectedDate = date;
     }
 
     // Inner class for creating the DatePickerFragment displayed for choosing date
@@ -223,11 +230,10 @@ public class CreateTransactionActivity extends ListActivity implements TheListen
 
             Calendar c = Calendar.getInstance();
             c.set(year, monthOfYear, dayOfMonth);
+            Date date = c.getTime();
 
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            String formattedDate = sdf.format(c.getTime());
             if (listener != null) {
-                listener.returnDate(formattedDate);
+                listener.returnDate(date);
             }
         }
     }

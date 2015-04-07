@@ -1,6 +1,5 @@
 package com.lundincast.my_finance_manager.activities;
 
-import android.app.ActionBar;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
@@ -8,14 +7,13 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.CursorTreeAdapter;
+import android.widget.ExpandableListView;
 
 import com.lundincast.my_finance_manager.R;
 import com.lundincast.my_finance_manager.activities.data.CategoriesDataSource;
 import com.lundincast.my_finance_manager.activities.data.DbSQLiteHelper;
-import com.lundincast.my_finance_manager.activities.data.TransactionCursorAdapter;
+import com.lundincast.my_finance_manager.activities.data.TransactionCursorTreeAdapter;
 import com.lundincast.my_finance_manager.activities.data.TransactionDataSource;
 
 import java.sql.SQLException;
@@ -29,7 +27,7 @@ public class ListTransactionsActivity extends ListActivity {
     private TransactionDataSource datasource;
     private CategoriesDataSource catDatasource;
     private Cursor cursor;
-    TransactionCursorAdapter adapter;
+    TransactionCursorTreeAdapter adapter;
 
     ArrayList<String> catFilter;
 
@@ -51,39 +49,43 @@ public class ListTransactionsActivity extends ListActivity {
             e.printStackTrace();
         }
 
+        // datasource.getTransactionsByMonthAndYear("3", "2015");
+        // TransactionCursorTreeAdapter adapter2 = new TransactionCursorTreeAdapter(datasource.getTransactionsGroupByUniqueMonthAndYear(), this);
 
         catFilter = catDatasource.getAllCategoriesStringList();
 
         //******************************************************************************************
-        ArrayAdapter<String> adapterFilter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, catFilter);
-        getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        ActionBar.OnNavigationListener navigationListener = new ActionBar.OnNavigationListener() {
-            @Override
-            public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-                Cursor newCursor = ListTransactionsActivity.this.datasource.getTransactionsPerCategory(catFilter.get(itemPosition));
-                ListTransactionsActivity.this.adapter.swapCursor(newCursor);
-                return false;
-            }
-        };
-        getActionBar().setListNavigationCallbacks(adapterFilter, navigationListener);
+//        ArrayAdapter<String> adapterFilter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, catFilter);
+//        getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+//        ActionBar.OnNavigationListener navigationListener = new ActionBar.OnNavigationListener() {
+//            @Override
+//            public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+//                Cursor newCursor = ListTransactionsActivity.this.datasource.getTransactionsPerCategory(catFilter.get(itemPosition));
+//                ListTransactionsActivity.this.adapter.swapCursor(newCursor);
+//                return false;
+//            }
+//        };
+//        getActionBar().setListNavigationCallbacks(adapterFilter, navigationListener);
         //******************************************************************************************
-        cursor = datasource.getAllTransaction();
+        cursor = datasource.getTransactionsGroupByUniqueMonthAndYear();
         startManagingCursor(cursor);
 
-        adapter = new TransactionCursorAdapter(this, cursor);
-        ListView lv = getListView();
+        adapter = new TransactionCursorTreeAdapter(cursor, this);
+        final ExpandableListView lv = (ExpandableListView) getListView();
         lv.setAdapter(adapter);
 
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lv.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Cursor cursor = (Cursor) adapter.getItem(position);
-                int test = cursor.getShort(0);
-                long transactionId = cursor.getLong(cursor.getColumnIndex(DbSQLiteHelper.TRANSACTION_ID));
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+
+                CursorTreeAdapter adapter = (CursorTreeAdapter) lv.getExpandableListAdapter();
+                Cursor adapterCursor = adapter.getChild(groupPosition, childPosition);
+                long transactionId = adapterCursor.getLong(adapterCursor.getColumnIndex(DbSQLiteHelper.TRANSACTION_ID));
                 // We only pass transaction id to EditActivity, it'll instantiate the object from there
                 Intent editIntent = new Intent(getApplicationContext(), EditTransactionActivity.class);
                 editIntent.putExtra("transactionId", transactionId);
                 startActivityForResult(editIntent, 2);
+                return false;
             }
         });
 
@@ -105,6 +107,7 @@ public class ListTransactionsActivity extends ListActivity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        adapter.notifyDataSetChanged();
         super.onResume();
     }
 
@@ -135,5 +138,6 @@ public class ListTransactionsActivity extends ListActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 
 }

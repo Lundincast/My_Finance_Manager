@@ -86,6 +86,7 @@ public class EditTransactionActivity extends ListActivity implements TheListener
                 + Integer.toString(cal.get(Calendar.DAY_OF_MONTH)) + " "
                 + months[cal.get(Calendar.MONTH)] + " "
                 + Integer.toString(cal.get(Calendar.YEAR)));
+        selectedDate = transaction.getDate();
 
         EditText commentEditText = (EditText) findViewById(R.id.transaction_comment);
         commentEditText.setText(transaction.getComment());
@@ -173,6 +174,7 @@ public class EditTransactionActivity extends ListActivity implements TheListener
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        adapter.notifyDataSetInvalidated();
         super.onResume();
     }
 
@@ -272,7 +274,7 @@ public class EditTransactionActivity extends ListActivity implements TheListener
             int month = c.get(Calendar.MONTH);
             int day = c.get(Calendar.DAY_OF_MONTH);
             listener = (TheListener) getActivity();
-
+            // TODO set date from transaction object on dialog open
             // create a new instance of DatePickerDialog and return it
             return new DatePickerDialog(getActivity(), this, year, month, day);
         }

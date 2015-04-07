@@ -47,6 +47,8 @@ public class CreateCategoriesActivity extends ActionBarActivity implements Adapt
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
+        // Set default color to red
+        color = "red";
 
 
     }

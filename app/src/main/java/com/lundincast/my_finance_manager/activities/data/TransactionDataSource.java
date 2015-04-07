@@ -33,6 +33,11 @@ public class TransactionDataSource {
             DbSQLiteHelper.TRANSACTION_MONTH,
             DbSQLiteHelper.TRANSACTION_YEAR};
 
+    private String[] monthAndYearColumnsWithCategory = {DbSQLiteHelper.TRANSACTION_ID,
+            DbSQLiteHelper.TRANSACTION_MONTH,
+            DbSQLiteHelper.TRANSACTION_YEAR,
+            DbSQLiteHelper.TRANSACTION_CATEGORY};
+
     public TransactionDataSource(Context context) {
         dbHelper = new DbSQLiteHelper(context);
     }
@@ -101,28 +106,48 @@ public class TransactionDataSource {
                     DbSQLiteHelper.TRANSACTION_DATE + " DESC");
         } else {
             cursor = database.query(DbSQLiteHelper.TABLE_TRANSACTIONS,
-                    allColumns, DbSQLiteHelper.TRANSACTION_CATEGORY + " =?", args, null, null,
+                    allColumns, DbSQLiteHelper.TRANSACTION_CATEGORY + " =?", args,
+                    null, null,
                     DbSQLiteHelper.TRANSACTION_DATE + " DESC");
         }
         return cursor;
     }
 
-    public Cursor getTransactionsGroupByUniqueMonthAndYear() {
+    public Cursor getTransactionsGroupByUniqueMonthAndYear(String category) {
 
-        Cursor cursor = database.query(true, DbSQLiteHelper.TABLE_TRANSACTIONS,
-                        monthAndYearColumns, null, null, DbSQLiteHelper.TRANSACTION_MONTH + ", " + DbSQLiteHelper.TRANSACTION_YEAR, null,
-                        DbSQLiteHelper.TRANSACTION_DATE + " DESC", null);
+        Cursor cursor;
+        String[] args;
 
+        if (category == null) {
+            cursor = database.query(true, DbSQLiteHelper.TABLE_TRANSACTIONS,
+                    monthAndYearColumns, null, null,
+                    DbSQLiteHelper.TRANSACTION_MONTH + ", " + DbSQLiteHelper.TRANSACTION_YEAR, null,
+                    DbSQLiteHelper.TRANSACTION_DATE + " DESC", null);
+        } else {
+            args = new String[] {category};
+            cursor = database.query(true, DbSQLiteHelper.TABLE_TRANSACTIONS,
+                    monthAndYearColumnsWithCategory, DbSQLiteHelper.TRANSACTION_CATEGORY + " =?", args, DbSQLiteHelper.TRANSACTION_MONTH + ", " + DbSQLiteHelper.TRANSACTION_YEAR, null,
+                    DbSQLiteHelper.TRANSACTION_DATE + " DESC", null);
+        }
         return cursor;
     }
 
-    public Cursor getTransactionsByMonthAndYear(String month, String year) {
+    public Cursor getTransactionsByMonthAndYear(String month, String year, String category) {
 
-        String[] args = new String[] {month, year};
+        Cursor cursor;
+        String[] args;
 
-        Cursor cursor = database.query(DbSQLiteHelper.TABLE_TRANSACTIONS,
-                        allColumns, DbSQLiteHelper.TRANSACTION_MONTH + " = ? AND " + DbSQLiteHelper.TRANSACTION_YEAR + " = ?",
-                        args, null, null, DbSQLiteHelper.TRANSACTION_DATE + " DESC");
+        if (category == null) {
+            args = new String[] {month, year};
+            cursor = database.query(DbSQLiteHelper.TABLE_TRANSACTIONS,
+                    allColumns, DbSQLiteHelper.TRANSACTION_MONTH + " = ? AND " + DbSQLiteHelper.TRANSACTION_YEAR + " = ? ",
+                    args, null, null, DbSQLiteHelper.TRANSACTION_DATE + " DESC");
+        } else {
+            args = new String[] {month, year, category};
+            cursor = database.query(DbSQLiteHelper.TABLE_TRANSACTIONS,
+                    allColumns, DbSQLiteHelper.TRANSACTION_MONTH + " = ? AND " + DbSQLiteHelper.TRANSACTION_YEAR + " = ? AND " + DbSQLiteHelper.TRANSACTION_CATEGORY + " = ? ",
+                    args, null, null, DbSQLiteHelper.TRANSACTION_DATE + " DESC");
+        }
 
         return cursor;
     }

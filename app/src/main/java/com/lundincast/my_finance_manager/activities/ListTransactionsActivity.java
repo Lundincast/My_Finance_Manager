@@ -1,12 +1,16 @@
 package com.lundincast.my_finance_manager.activities;
 
+import android.app.ActionBar;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.CursorTreeAdapter;
 import android.widget.ExpandableListView;
 
@@ -15,14 +19,12 @@ import com.lundincast.my_finance_manager.activities.data.CategoriesDataSource;
 import com.lundincast.my_finance_manager.activities.data.DbSQLiteHelper;
 import com.lundincast.my_finance_manager.activities.data.TransactionCursorTreeAdapter;
 import com.lundincast.my_finance_manager.activities.data.TransactionDataSource;
+import com.lundincast.my_finance_manager.activities.model.Category;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class ListTransactionsActivity extends ListActivity {
-
-    // TODO implement expandable ListView
-    // TODO implement color change animation on category sorting
 
     private TransactionDataSource datasource;
     private CategoriesDataSource catDatasource;
@@ -49,25 +51,9 @@ public class ListTransactionsActivity extends ListActivity {
             e.printStackTrace();
         }
 
-        // datasource.getTransactionsByMonthAndYear("3", "2015");
-        // TransactionCursorTreeAdapter adapter2 = new TransactionCursorTreeAdapter(datasource.getTransactionsGroupByUniqueMonthAndYear(), this);
-
         catFilter = catDatasource.getAllCategoriesStringList();
 
-        //******************************************************************************************
-//        ArrayAdapter<String> adapterFilter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, catFilter);
-//        getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-//        ActionBar.OnNavigationListener navigationListener = new ActionBar.OnNavigationListener() {
-//            @Override
-//            public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-//                Cursor newCursor = ListTransactionsActivity.this.datasource.getTransactionsPerCategory(catFilter.get(itemPosition));
-//                ListTransactionsActivity.this.adapter.swapCursor(newCursor);
-//                return false;
-//            }
-//        };
-//        getActionBar().setListNavigationCallbacks(adapterFilter, navigationListener);
-        //******************************************************************************************
-        cursor = datasource.getTransactionsGroupByUniqueMonthAndYear();
+        cursor = datasource.getTransactionsGroupByUniqueMonthAndYear(null);
         startManagingCursor(cursor);
 
         adapter = new TransactionCursorTreeAdapter(cursor, this);
@@ -89,7 +75,47 @@ public class ListTransactionsActivity extends ListActivity {
             }
         });
 
-
+        //******************************************************************************************
+        final ArrayAdapter<String> adapterFilter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, catFilter);
+        getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        ActionBar.OnNavigationListener navigationListener = new ActionBar.OnNavigationListener() {
+            @Override
+            public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+                //Cursor newCursor = ListTransactionsActivity.this.datasource.getTransactionsPerCategory(catFilter.get(itemPosition));
+                //adapter.setGroupCursor(newCursor);
+                //adapter = new TransactionCursorTreeAdapter(newCursor, getApplicationContext());
+                //adapter.notifyDataSetChanged();
+                //ListTransactionsActivity.this.adapter.setGroupCursor(newCursor);
+                //ListTransactionsActivity.this.adapter.notifyDataSetChanged();
+                if (itemId != 0) {
+                    // set action bar color depending on selected category
+                    Category category = catDatasource.getCategoryByName(adapterFilter.getItem(itemPosition));
+                    String color = category.getColor();
+                    String[] colorsArray =  getApplicationContext().getResources().getStringArray(R.array.colors_array);
+                    String[] colorValue = getApplicationContext().getResources().getStringArray(R.array.colors_value);
+                    int it = 0;
+                    for (String s: colorsArray) {
+                        if (s.equals(color)) {
+                            getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor(colorValue[it])));
+                            break;
+                        }
+                        it++;
+                    }
+                    // set new group cursor queried by category
+                    Cursor newCursor = datasource.getTransactionsGroupByUniqueMonthAndYear(adapterFilter.getItem(itemPosition));
+                    adapter.changeCursor(newCursor);
+                } else {
+                    // set default action bar color
+                    getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#fff3f3f3")));
+                    // set new group cursor with all categories
+                    Cursor newCursor = datasource.getTransactionsGroupByUniqueMonthAndYear(null);
+                    adapter.changeCursor(newCursor);
+                }
+                return true;
+            }
+        };
+        getActionBar().setListNavigationCallbacks(adapterFilter, navigationListener);
+        //******************************************************************************************
 
     }
 
@@ -138,6 +164,7 @@ public class ListTransactionsActivity extends ListActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 
 
 }

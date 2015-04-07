@@ -41,14 +41,21 @@ public class TransactionCursorTreeAdapter extends CursorTreeAdapter {
         }
     }
 
+
     @Override
     protected Cursor getChildrenCursor(Cursor groupCursor) {
+
+        Cursor cursor;
 
         // Extract month and year from groupCursor for database query
         String month = groupCursor.getString(groupCursor.getColumnIndexOrThrow(DbSQLiteHelper.TRANSACTION_MONTH));
         String year = groupCursor.getString(groupCursor.getColumnIndexOrThrow(DbSQLiteHelper.TRANSACTION_YEAR));
-
-        Cursor cursor = datasource.getTransactionsByMonthAndYear(month, year);
+        if (groupCursor.getColumnIndex(DbSQLiteHelper.TRANSACTION_CATEGORY) != -1) {
+            String category = groupCursor.getString(groupCursor.getColumnIndexOrThrow(DbSQLiteHelper.TRANSACTION_CATEGORY));
+            cursor = datasource.getTransactionsByMonthAndYear(month, year, category);
+        } else {
+            cursor = datasource.getTransactionsByMonthAndYear(month, year, null);
+        }
 
         return cursor;
     }
@@ -137,6 +144,9 @@ public class TransactionCursorTreeAdapter extends CursorTreeAdapter {
 
     }
 
+    @Override
+    public void setGroupCursor(Cursor cursor) {
+        super.setGroupCursor(cursor);
 
-
+    }
 }

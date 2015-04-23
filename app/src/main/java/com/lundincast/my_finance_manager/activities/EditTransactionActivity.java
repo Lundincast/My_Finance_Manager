@@ -7,9 +7,13 @@ import android.app.DialogFragment;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,6 +36,8 @@ import com.lundincast.my_finance_manager.activities.model.Transaction;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class EditTransactionActivity extends ListActivity implements TheListener {
 
@@ -72,9 +78,18 @@ public class EditTransactionActivity extends ListActivity implements TheListener
             this.transaction = transactionDatasource.getTransaction(id);
         }
 
+        // get preferences for currency display
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String currPref = sharedPref.getString("pref_key_currency", "1");
+
         // set elements from Transaction variables
         priceTextView = (TextView) findViewById(R.id.transaction_price);
-        priceTextView.setText(Short.toString((short) transaction.getPrice()) + " €");
+        double transacPrice = transaction.getPrice();
+        if (currPref.equals("2")) {
+            priceTextView.setText(String.format("%.2f", transacPrice) + " $");
+        } else {
+            priceTextView.setText(Double.toString(transacPrice) + " €");
+        }
         selectedCategory = transaction.getCategory();
 
         EditText dateEditText = (EditText) findViewById(R.id.transaction_date);
@@ -132,6 +147,8 @@ public class EditTransactionActivity extends ListActivity implements TheListener
         // set keyboard to numbers only to enter price
         final EditText userInput = (EditText) priceInputView.findViewById(R.id.editTextDialogPriceInput);
         userInput.setRawInputType(Configuration.KEYBOARD_12KEY);
+        userInput.setFilters(new InputFilter[] {new DecimalDigitsInputFilter(5, 2)});
+        userInput.setText(String.format("%.2f", transaction.getPrice()));
 
         // set dialog message
         builder
@@ -229,7 +246,7 @@ public class EditTransactionActivity extends ListActivity implements TheListener
 
             String transacPriceString = transactionPrice.getText().toString();
             transacPriceString = transacPriceString.substring(0, transacPriceString.length() - 2);
-            short transacPrice = Short.parseShort(transacPriceString);
+            double transacPrice = Double.parseDouble(transacPriceString);
             String transacComment = transactionComment.getText().toString();
 
             Transaction transaction = new Transaction(this.transaction.getId(),
@@ -290,5 +307,24 @@ public class EditTransactionActivity extends ListActivity implements TheListener
                 listener.returnDate(date);
             }
         }
+    }
+
+    public class DecimalDigitsInputFilter implements InputFilter {
+
+        Pattern mPattern;
+
+        public DecimalDigitsInputFilter(int digitsBeforeZero,int digitsAfterZero) {
+            mPattern=Pattern.compile("[0-9]{0," + (digitsBeforeZero-1) + "}+((\\.[0-9]{0," + (digitsAfterZero-1) + "})?)||(\\.)?");
+        }
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+
+            Matcher matcher=mPattern.matcher(dest);
+            if(!matcher.matches())
+                return "";
+            return null;
+        }
+
     }
 }

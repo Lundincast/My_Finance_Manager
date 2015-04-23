@@ -85,13 +85,10 @@ public class CategoriesDataSource {
     }
 
     public Cursor getAllCategories() {
-        List<Category> categories = new ArrayList<Category>();
 
         Cursor cursor = database.query(DbSQLiteHelper.TABLE_CATEGORIES,
                 allColumns, null, null, null, null, null);
 
-        // Make sure to close the cursor
-        // cursor.close();
         return cursor;
     }
 

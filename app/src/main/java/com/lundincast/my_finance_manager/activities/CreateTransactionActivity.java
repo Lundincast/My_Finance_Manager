@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,6 +34,8 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CreateTransactionActivity extends ListActivity implements TheListener {
 
@@ -108,6 +112,7 @@ public class CreateTransactionActivity extends ListActivity implements TheListen
         // set keyboard to numbers only to enter price
         final EditText userInput = (EditText) priceInputView.findViewById(R.id.editTextDialogPriceInput);
         userInput.setRawInputType(Configuration.KEYBOARD_12KEY);
+        userInput.setFilters(new InputFilter[] {new DecimalDigitsInputFilter(5, 2)});
 
         // set dialog message
         builder
@@ -123,7 +128,7 @@ public class CreateTransactionActivity extends ListActivity implements TheListen
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                CreateTransactionActivity.this.transactionPrice.setText(userInput.getText() + " €");
+                                transactionPrice.setText(userInput.getText().toString() + " €");
                             }
                         });
 
@@ -182,7 +187,7 @@ public class CreateTransactionActivity extends ListActivity implements TheListen
 
             String transacPriceString = transactionPrice.getText().toString();
             transacPriceString = transacPriceString.substring(0, transacPriceString.length() - 2);
-            short transacPrice = Short.parseShort(transacPriceString);
+            double transacPrice = Double.parseDouble(transacPriceString);
             String transacComment = transactionComment.getText().toString();
 
             Transaction transaction = new Transaction(transacPrice, selectedCategory, selectedDate, transacComment);
@@ -236,6 +241,25 @@ public class CreateTransactionActivity extends ListActivity implements TheListen
                 listener.returnDate(date);
             }
         }
+    }
+
+    public class DecimalDigitsInputFilter implements InputFilter {
+
+        Pattern mPattern;
+
+        public DecimalDigitsInputFilter(int digitsBeforeZero,int digitsAfterZero) {
+            mPattern=Pattern.compile("[0-9]{0," + (digitsBeforeZero-1) + "}+((\\.[0-9]{0," + (digitsAfterZero-1) + "})?)||(\\.)?");
+        }
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+
+            Matcher matcher=mPattern.matcher(dest);
+            if(!matcher.matches())
+                return "";
+            return null;
+        }
+
     }
 
 }

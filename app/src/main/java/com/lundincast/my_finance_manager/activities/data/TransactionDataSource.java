@@ -179,7 +179,7 @@ public class TransactionDataSource {
 
         // extract data from cursor
         long id = cursor.getLong(idIndex);
-        short price = cursor.getShort(priceIndex);
+        double price = cursor.getDouble(priceIndex);
         String category = cursor.getString(categoryIndex);
         long dateInt = cursor.getLong(dateIndex);
         Date date = new Date(dateInt);

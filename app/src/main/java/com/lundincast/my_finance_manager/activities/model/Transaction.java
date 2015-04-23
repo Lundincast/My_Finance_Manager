@@ -21,7 +21,7 @@ public class Transaction{
         this.comment = comment;
     }
 
-    public Transaction(short price, String category, Date date, String comment) {
+    public Transaction(double price, String category, Date date, String comment) {
         this.price = price;
         this.category = category;
         this.date = date;
@@ -44,7 +44,7 @@ public class Transaction{
         return price;
     }
 
-    public void setPrice(short price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 

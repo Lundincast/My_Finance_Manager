@@ -132,21 +132,14 @@ public class TransactionCursorTreeAdapter extends CursorTreeAdapter {
 
         commentTv.setText(comment);
         // get preferences for currency display
-        // TODO ListTransactionActivity needs to be refreshed after currency preferences is changed so that this adapter is updated as well
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         String currPref = sharedPref.getString("pref_key_currency", "1");
-
         if (currPref.equals("2")) {
-            priceTv.setText(Double.toString(price) + " $");
+            priceTv.setText(String.format("%.2f", price) + " $");
         } else {
-            priceTv.setText(Double.toString(price) + " €");
+            priceTv.setText(String.format("%.2f",price) + " €");
         }
 
     }
 
-    @Override
-    public void setGroupCursor(Cursor cursor) {
-        super.setGroupCursor(cursor);
-
-    }
 }

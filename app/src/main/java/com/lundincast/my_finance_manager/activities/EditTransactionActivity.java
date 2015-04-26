@@ -1,5 +1,6 @@
 package com.lundincast.my_finance_manager.activities;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -123,6 +124,9 @@ public class EditTransactionActivity extends ListActivity implements TheListener
         setListAdapter(adapter);
 
         ListView lv = getListView();
+        lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        lv.setSelector(android.R.color.darker_gray);
+
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -276,7 +280,8 @@ public class EditTransactionActivity extends ListActivity implements TheListener
     }
 
     // Inner class for creating the DatePickerFragment displayed for choosing date
-    public static class DatePickerFragment extends DialogFragment
+    @SuppressLint("ValidFragment")
+    public class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
 
         TheListener listener;
@@ -286,14 +291,11 @@ public class EditTransactionActivity extends ListActivity implements TheListener
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // use the current date as the default date in the picker
-            final Calendar c = Calendar.getInstance();
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
+            Calendar c = Calendar.getInstance();
+            c.setTime(selectedDate);
             listener = (TheListener) getActivity();
-            // TODO set date from transaction object on dialog open
             // create a new instance of DatePickerDialog and return it
-            return new DatePickerDialog(getActivity(), this, year, month, day);
+            return new DatePickerDialog(getActivity(), this, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
         }
 
         @Override
@@ -327,4 +329,5 @@ public class EditTransactionActivity extends ListActivity implements TheListener
         }
 
     }
+
 }

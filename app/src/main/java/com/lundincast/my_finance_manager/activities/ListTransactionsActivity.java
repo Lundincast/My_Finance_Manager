@@ -1,12 +1,16 @@
 package com.lundincast.my_finance_manager.activities;
 
 import android.app.ActionBar;
+import android.app.AlarmManager;
 import android.app.ListActivity;
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +19,7 @@ import android.widget.CursorTreeAdapter;
 import android.widget.ExpandableListView;
 
 import com.lundincast.my_finance_manager.R;
+import com.lundincast.my_finance_manager.activities.BroadcastReceivers.NotificationAlarmReceiver;
 import com.lundincast.my_finance_manager.activities.data.CategoriesDataSource;
 import com.lundincast.my_finance_manager.activities.data.DbSQLiteHelper;
 import com.lundincast.my_finance_manager.activities.data.TransactionCursorTreeAdapter;
@@ -23,6 +28,8 @@ import com.lundincast.my_finance_manager.activities.model.Category;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class ListTransactionsActivity extends ListActivity {
 
@@ -30,14 +37,18 @@ public class ListTransactionsActivity extends ListActivity {
     private CategoriesDataSource catDatasource;
     private Cursor cursor;
     TransactionCursorTreeAdapter adapter;
+    SharedPreferences sharedPref;
 
     ArrayList<String> catFilter;
+
+    // TODO notification triggered on app launch
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_transactions);
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         datasource = new TransactionDataSource(this);
         try {
             datasource.open();
@@ -59,7 +70,6 @@ public class ListTransactionsActivity extends ListActivity {
         adapter = new TransactionCursorTreeAdapter(cursor, this);
         final ExpandableListView lv = (ExpandableListView) getListView();
         lv.setAdapter(adapter);
-
         lv.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
@@ -117,6 +127,19 @@ public class ListTransactionsActivity extends ListActivity {
         getActionBar().setListNavigationCallbacks(adapterFilter, navigationListener);
         //******************************************************************************************
 
+        // Set intent to be broadcast for reminder
+        Intent intent = new Intent(this, NotificationAlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        // Find out time difference between "now" and next 23h
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR, sharedPref.getInt("hour_of_day_alarm", 23));
+        cal.set(Calendar.MINUTE, sharedPref.getInt("minute_of_day_alarm", 00));
+        cal.set(Calendar.SECOND, 0);
+        Date today = new Date();
+        long diff = cal.getTime().getTime() - today.getTime();
+        // Set AlarmManager to trigger broadcast
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.setInexactRepeating(AlarmManager.RTC, diff, AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 
 

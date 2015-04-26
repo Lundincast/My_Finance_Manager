@@ -19,11 +19,22 @@
             android:title="@string/pref_title_categories" />
     </PreferenceCategory>
     <PreferenceCategory
-        android:title="@string/pref_income_settings"
-        android:key="pref_key_income_settings" >
+        android:title="Notifications"
+        android:key="pref_key_notification">
+        <CheckBoxPreference
+            android:key="pref_key_daily_reminder"
+            android:title="Daily reminder"
+            android:defaultValue="false" />
         <Preference
-            android:key="pref_key_regular_income"
-            android:title="@string/pref_title_regular_income" />
+            android:key="pref_key_time_day"
+            android:title="Time of day"
+            android:dependency="pref_key_daily_reminder"/>
+        <CheckBoxPreference
+            android:key="pref_key_adapted_reminder"
+            android:title="Adapted reminder"
+            android:summary="Remind me only when I did not record an expense for the current day"
+            android:dependency="pref_key_daily_reminder"
+            android:defaultValue="true" />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/pref_about_settings"
@@ -34,6 +45,6 @@
         <Preference
             android:key="pref_key_about"
             android:title="@string/pref_title_about"
-            android:summary="App version 0.1"/>
+            android:summary="App version 0.1.1"/>
     </PreferenceCategory>
 </PreferenceScreen>

@@ -28,6 +28,7 @@ public class DbSQLiteHelper extends SQLiteOpenHelper {
     public static final String TRANSACTION_PRICE = "price";
     public static final String TRANSACTION_CATEGORY = "category";
     public static final String TRANSACTION_DATE = "date";
+    public static final String TRANSACTION_DAY = "day";
     public static final String TRANSACTION_MONTH = "month";
     public static final String TRANSACTION_YEAR = "year";
     public static final String TRANSACTION_COMMENT = "comment";
@@ -45,6 +46,7 @@ public class DbSQLiteHelper extends SQLiteOpenHelper {
                                        + TRANSACTION_PRICE + " real not null, "
                                        + TRANSACTION_CATEGORY + " text not null, "
                                        + TRANSACTION_DATE + " int not null, "
+                                       + TRANSACTION_DAY + " int not null, "
                                        + TRANSACTION_MONTH + " int not null, "
                                        + TRANSACTION_YEAR + " int not null, "
                                        + TRANSACTION_COMMENT + " text not null);";

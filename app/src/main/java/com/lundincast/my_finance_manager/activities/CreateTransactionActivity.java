@@ -79,6 +79,8 @@ public class CreateTransactionActivity extends ListActivity implements TheListen
         });
 
         ListView lv = getListView();
+        lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        lv.setSelector(android.R.color.darker_gray);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

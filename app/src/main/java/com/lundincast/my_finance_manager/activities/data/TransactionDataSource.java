@@ -25,6 +25,7 @@ public class TransactionDataSource {
             DbSQLiteHelper.TRANSACTION_PRICE,
             DbSQLiteHelper.TRANSACTION_CATEGORY,
             DbSQLiteHelper.TRANSACTION_DATE,
+            DbSQLiteHelper.TRANSACTION_DAY,
             DbSQLiteHelper.TRANSACTION_MONTH,
             DbSQLiteHelper.TRANSACTION_YEAR,
             DbSQLiteHelper.TRANSACTION_COMMENT };
@@ -57,6 +58,7 @@ public class TransactionDataSource {
         Calendar cal = Calendar.getInstance();
         cal.setTime(transaction.getDate());
         values.put(DbSQLiteHelper.TRANSACTION_DATE, transaction.getDate().getTime());
+        values.put(DbSQLiteHelper.TRANSACTION_DAY, cal.get(Calendar.DAY_OF_MONTH));
         values.put(DbSQLiteHelper.TRANSACTION_MONTH, cal.get(Calendar.MONTH));
         values.put(DbSQLiteHelper.TRANSACTION_YEAR, cal.get(Calendar.YEAR));
         values.put(DbSQLiteHelper.TRANSACTION_COMMENT, transaction.getComment());
@@ -76,6 +78,7 @@ public class TransactionDataSource {
         Calendar cal = Calendar.getInstance();
         cal.setTime(transaction.getDate());
         values.put(DbSQLiteHelper.TRANSACTION_DATE, transaction.getDate().getTime());
+        values.put(DbSQLiteHelper.TRANSACTION_DAY, cal.get(Calendar.DAY_OF_MONTH));
         values.put(DbSQLiteHelper.TRANSACTION_MONTH, cal.get(Calendar.MONTH));
         values.put(DbSQLiteHelper.TRANSACTION_YEAR, cal.get(Calendar.YEAR));
         values.put(DbSQLiteHelper.TRANSACTION_COMMENT, transaction.getComment());
@@ -95,6 +98,20 @@ public class TransactionDataSource {
         Transaction transaction = cursorToTransaction(cursor);
         cursor.close();
         return transaction;
+    }
+
+
+    public Cursor getTransactionByDate(Date date) {
+        Cursor cursor;
+        String[] args;
+        Calendar cal;
+        cal = Calendar.getInstance();
+        cal.setTime(date);
+        args = new String[] {String.valueOf(cal.get(Calendar.DAY_OF_MONTH)), String.valueOf(cal.get(Calendar.MONTH)), String.valueOf(cal.get(Calendar.YEAR))};
+        cursor = database.query(DbSQLiteHelper.TABLE_TRANSACTIONS,
+                monthAndYearColumns, DbSQLiteHelper.TRANSACTION_DAY + " = ? AND " + DbSQLiteHelper.TRANSACTION_MONTH + " = ? AND " + DbSQLiteHelper.TRANSACTION_YEAR + " = ? ",
+                args, null, null, null);
+        return cursor;
     }
 
     public Cursor getTransactionsPerCategory(String category) {

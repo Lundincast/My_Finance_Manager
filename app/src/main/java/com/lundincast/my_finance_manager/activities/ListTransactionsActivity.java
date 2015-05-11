@@ -30,6 +30,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class ListTransactionsActivity extends ListActivity {
 
@@ -40,6 +41,7 @@ public class ListTransactionsActivity extends ListActivity {
     SharedPreferences sharedPref;
 
     ArrayList<String> catFilter;
+    private long[] expandedIds;
 
     // TODO notification triggered on app launch
 
@@ -70,6 +72,8 @@ public class ListTransactionsActivity extends ListActivity {
         adapter = new TransactionCursorTreeAdapter(cursor, this);
         final ExpandableListView lv = (ExpandableListView) getListView();
         lv.setAdapter(adapter);
+        lv.expandGroup(0);
+        lv.setSaveEnabled(true);
         lv.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
@@ -81,6 +85,7 @@ public class ListTransactionsActivity extends ListActivity {
                 Intent editIntent = new Intent(getApplicationContext(), EditTransactionActivity.class);
                 editIntent.putExtra("transactionId", transactionId);
                 startActivityForResult(editIntent, 2);
+                ListTransactionsActivity.this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 return false;
             }
         });
@@ -142,13 +147,6 @@ public class ListTransactionsActivity extends ListActivity {
         alarmManager.setInexactRepeating(AlarmManager.RTC, diff, AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 
-
-    @Override
-    protected void onPause() {
-        datasource.close();
-        super.onPause();
-    }
-
     @Override
     protected void onResume() {
         try {
@@ -158,7 +156,50 @@ public class ListTransactionsActivity extends ListActivity {
         }
         adapter.notifyDataSetChanged();
         super.onResume();
+        if (this.expandedIds != null) {
+            restoreExpandedState(expandedIds);
+        }
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if (this.expandedIds != null) {
+            restoreExpandedState(expandedIds);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        datasource.close();
+        super.onPause();
+        expandedIds = getExpandedIds();
+        int i = 0;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        this.expandedIds = getExpandedIds();
+        outState.putLongArray("ExpandedIds", this.expandedIds);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle state) {
+        super.onRestoreInstanceState(state);
+        long[] expandedIds = state.getLongArray("ExpandedIds");
+        if (expandedIds != null) {
+            restoreExpandedState(expandedIds);
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -188,6 +229,53 @@ public class ListTransactionsActivity extends ListActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private long[] getExpandedIds() {
+        ExpandableListView lv = (ExpandableListView) getListView();
+        TransactionCursorTreeAdapter adapter = (TransactionCursorTreeAdapter) lv.getExpandableListAdapter();
+        if (adapter != null) {
+            int length = adapter.getGroupCount();
+            ArrayList<Long> expandedIds = new ArrayList<Long>();
+            for(int i=0; i < length; i++) {
+                if(lv.isGroupExpanded(i)) {
+                    expandedIds.add(adapter.getGroupId(i));
+                }
+            }
+            return toLongArray(expandedIds);
+        } else {
+            return null;
+        }
+    }
+
+    private void restoreExpandedState(long[] expandedIds) {
+        this.expandedIds = expandedIds;
+        if (expandedIds != null) {
+            ExpandableListView lv = (ExpandableListView) getListView();
+            TransactionCursorTreeAdapter adapter = (TransactionCursorTreeAdapter) lv.getExpandableListAdapter();
+            if (adapter != null) {
+                for (int i=0; i<adapter.getGroupCount(); i++) {
+                    long id = adapter.getGroupId(i);
+                    if (inArray(expandedIds, id)) lv.expandGroup(i);
+                }
+            }
+        }
+    }
+
+    private static boolean inArray(long[] array, long element) {
+        for (long l : array) {
+            if (l == element) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static long[] toLongArray(List<Long> list)  {
+        long[] ret = new long[list.size()];
+        int i = 0;
+        for (Long e : list)
+            ret[i++] = e.longValue();
+        return ret;
+    }
 
 
 }

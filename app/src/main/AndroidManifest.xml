@@ -6,7 +6,15 @@
         android:minSdkVersion="11"
         android:targetSdkVersion="19" />
 
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <android:uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
+    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <android:uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
 
     <application
         android:allowBackup="true"
@@ -34,6 +42,7 @@
         <activity
             android:name=".activities.CreateCategoriesActivity"
             android:label="New category"
+            android:theme="@android:style/Theme.Holo.Light"
             android:parentActivityName=".activities.ListCategoriesActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -42,6 +51,7 @@
         <activity
             android:name=".activities.EditCategoriesActivity"
             android:label="@string/title_activity_edit_categories"
+            android:theme="@android:style/Theme.Holo.Light"
             android:parentActivityName=".activities.ListCategoriesActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -82,8 +92,12 @@
             android:exported="true" >
         </service>
 
-        <receiver android:name=".activities.BroadcastReceivers.NotificationAlarmReceiver"/>
+        <receiver android:name=".activities.BroadcastReceivers.NotificationAlarmReceiver" />
 
+        <activity
+            android:name=".activities.OverviewActivity"
+            android:label="@string/title_activity_overview" >
+        </activity>
     </application>
 
 </manifest>

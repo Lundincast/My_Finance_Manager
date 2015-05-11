@@ -91,9 +91,16 @@ public class CreateTransactionActivity extends ListActivity implements TheListen
         });
 
         // Set date to today by default
-        EditText dateEditText = (EditText) findViewById(R.id.transaction_date);
-        dateEditText.setText("Today");
+        TextView dateTextView = (TextView) findViewById(R.id.transaction_date);
+        dateTextView.setText("Today");
         this.selectedDate = new Date();
+        dateTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog(v);
+            }
+        });
+
 
         // Launch dialog on create
         launchDialog();
@@ -205,7 +212,7 @@ public class CreateTransactionActivity extends ListActivity implements TheListen
 
     @Override
     public void returnDate(Date date) {
-        EditText transactionDate = (EditText) findViewById(R.id.transaction_date);
+        TextView transactionDate = (TextView) findViewById(R.id.transaction_date);
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         transactionDate.setText(sdf.format(date));
         this.selectedDate = date;

@@ -93,16 +93,22 @@ public class EditTransactionActivity extends ListActivity implements TheListener
         }
         selectedCategory = transaction.getCategory();
 
-        EditText dateEditText = (EditText) findViewById(R.id.transaction_date);
+        TextView dateTextView = (TextView) findViewById(R.id.transaction_date);
         String[] days = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
         String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"};
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(transaction.getDate().getTime());
-        dateEditText.setText(days[cal.get(Calendar.DAY_OF_WEEK) - 1] + ", "
+        dateTextView.setText(days[cal.get(Calendar.DAY_OF_WEEK) - 1] + ", "
                 + Integer.toString(cal.get(Calendar.DAY_OF_MONTH)) + " "
                 + months[cal.get(Calendar.MONTH)] + " "
                 + Integer.toString(cal.get(Calendar.YEAR)));
         selectedDate = transaction.getDate();
+        dateTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog(v);
+            }
+        });
 
         EditText commentEditText = (EditText) findViewById(R.id.transaction_comment);
         commentEditText.setText(transaction.getComment());
@@ -133,6 +139,7 @@ public class EditTransactionActivity extends ListActivity implements TheListener
                 Cursor cursor = (Cursor) adapter.getItem(position);
                 String category = cursor.getString(cursor.getColumnIndex(DbSQLiteHelper.COLUMN_CATEGORY));
                 EditTransactionActivity.this.selectedCategory = category;
+
             }
         });
     }
@@ -260,6 +267,7 @@ public class EditTransactionActivity extends ListActivity implements TheListener
             Intent intent = new Intent(this, ListTransactionsActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
+            EditTransactionActivity.this.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         }
 
         return super.onOptionsItemSelected(item);
@@ -271,7 +279,7 @@ public class EditTransactionActivity extends ListActivity implements TheListener
         String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"};
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(date.getTime());
-        EditText transactionDate = (EditText) findViewById(R.id.transaction_date);
+        TextView transactionDate = (TextView) findViewById(R.id.transaction_date);
         transactionDate.setText(days[cal.get(Calendar.DAY_OF_WEEK) - 1] + ", "
                 + Integer.toString(cal.get(Calendar.DAY_OF_MONTH)) + " "
                 + months[cal.get(Calendar.MONTH)] + " "

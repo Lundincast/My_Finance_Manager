@@ -35,13 +35,11 @@
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:layout_gravity="bottom">
-        <EditText
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="date"
             android:ems="10"
             android:id="@+id/transaction_date"
-            android:onClick="showDatePickerDialog"
             android:layout_above="@+id/transaction_comment"
             android:layout_alignRight="@+id/transaction_comment"
             android:layout_alignEnd="@+id/transaction_comment" />

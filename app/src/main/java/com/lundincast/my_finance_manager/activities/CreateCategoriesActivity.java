@@ -1,8 +1,8 @@
 package com.lundincast.my_finance_manager.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,7 +16,7 @@ import com.lundincast.my_finance_manager.activities.data.CategoriesDataSource;
 
 import java.sql.SQLException;
 
-public class CreateCategoriesActivity extends ActionBarActivity implements AdapterView.OnItemSelectedListener {
+public class CreateCategoriesActivity extends Activity implements AdapterView.OnItemSelectedListener {
 
     // TODO implement proper actionBar
 
@@ -103,6 +103,7 @@ public class CreateCategoriesActivity extends ActionBarActivity implements Adapt
                 Intent intent = new Intent(this, ListCategoriesActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+                CreateCategoriesActivity.this.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         }
 
         return super.onOptionsItemSelected(item);

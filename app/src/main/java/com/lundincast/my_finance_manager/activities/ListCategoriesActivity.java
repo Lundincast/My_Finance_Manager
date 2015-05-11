@@ -9,7 +9,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.lundincast.my_finance_manager.R;
 import com.lundincast.my_finance_manager.activities.data.CategoriesDataSource;
@@ -49,20 +48,11 @@ public class ListCategoriesActivity extends ListActivity {
                 long categoryId = cursor.getLong(cursor.getColumnIndexOrThrow(DbSQLiteHelper.COLUMN_ID));
                 Intent editIntent = new Intent(getApplicationContext(), EditCategoriesActivity.class);
                 editIntent.putExtra("categoryId", categoryId);
-                startActivityForResult(editIntent, 2);
+                startActivityForResult(editIntent, 1);
+                ListCategoriesActivity.this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         });
 
-    }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //mAdapterOld = null;
-        //mAdapterOld = (ArrayAdapter<Category>) getListAdapter();
-
-        Toast toast = Toast.makeText(getApplicationContext(), "New category created", Toast.LENGTH_SHORT);
-        toast.show();
     }
 
     @Override
@@ -81,6 +71,8 @@ public class ListCategoriesActivity extends ListActivity {
         super.onPause();
     }
 
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -97,11 +89,17 @@ public class ListCategoriesActivity extends ListActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_new) {
-            Intent editIntent = new Intent(this, CreateCategoriesActivity.class);
-            startActivityForResult(editIntent, 1);
+            Intent createIntent = new Intent(this, CreateCategoriesActivity.class);
+            startActivityForResult(createIntent, 1);
+            this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 }

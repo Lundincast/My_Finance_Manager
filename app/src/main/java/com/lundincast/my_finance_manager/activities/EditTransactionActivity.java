@@ -237,7 +237,7 @@ public class EditTransactionActivity extends ListActivity implements TheListener
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         transactionDatasource.delete(transaction);
-                        Intent intent = new Intent(getApplicationContext(), ListTransactionsActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                     }
@@ -264,7 +264,8 @@ public class EditTransactionActivity extends ListActivity implements TheListener
                     transacPrice, selectedCategory, selectedDate, transacComment);
             transactionDatasource.updateTransaction(transaction);
 
-            Intent intent = new Intent(this, ListTransactionsActivity.class);
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("selectedTab", 1);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
             EditTransactionActivity.this.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
@@ -272,6 +273,7 @@ public class EditTransactionActivity extends ListActivity implements TheListener
 
         return super.onOptionsItemSelected(item);
     }
+
 
     @Override
     public void returnDate(Date date) {
@@ -305,6 +307,8 @@ public class EditTransactionActivity extends ListActivity implements TheListener
             // create a new instance of DatePickerDialog and return it
             return new DatePickerDialog(getActivity(), this, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
         }
+
+
 
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {

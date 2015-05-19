@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.lundincast.my_finance_manager.activities.ListTransactionsActivity">
+
+    <item android:id="@+id/add_transaction"
+        android:icon="@drawable/ic_action_new"
+        android:title="Add"
+        android:showAsAction="never" />
+
+    <item android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        android:showAsAction="never" />
+
+</menu>

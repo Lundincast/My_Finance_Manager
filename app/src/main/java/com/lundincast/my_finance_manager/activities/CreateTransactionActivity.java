@@ -202,7 +202,7 @@ public class CreateTransactionActivity extends ListActivity implements TheListen
             Transaction transaction = new Transaction(transacPrice, selectedCategory, selectedDate, transacComment);
             transacDatasource.createTransaction(transaction);
 
-            Intent intent = new Intent(this, ListTransactionsActivity.class);
+            Intent intent = new Intent(this, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         }

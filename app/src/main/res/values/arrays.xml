@@ -11,6 +11,13 @@
         <item>2</item>
     </string-array>
 
+    <string-array name="feedbackoptions">
+        <item>Rate App</item>
+        <item>Report a bug</item>
+        <item>Leave a message</item>
+    </string-array>
+
+
     <string-array name="colors_array">
         <item>Red</item>
         <item>Blue</item>
@@ -25,16 +32,16 @@
     </string-array>
 
     <string-array name="colors_value">
-        <item>#CC0000</item>
-        <item>#00B9E4</item>
-        <item>#F8E828</item>
-        <item>#92B83E</item>
+        <item>#FF8D9A</item>
+        <item>#87EAFE</item>
+        <item>#FFF892</item>
+        <item>#C2FF93</item>
         <item>#000000</item>
         <item>#FFFFFF</item>
         <item>#E879A4</item>
         <item>#775530</item>
         <item>#7E0B80</item>
-        <item>#FF6600</item>
+        <item>#FFD390</item>
     </string-array>
     
 </resources>

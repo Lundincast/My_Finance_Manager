@@ -42,8 +42,6 @@ import java.util.regex.Pattern;
 
 public class EditTransactionActivity extends ListActivity implements TheListener {
 
-    // TODO implement activity transitions
-
     private CategoriesDataSource categoryDatasource;
     private TransactionDataSource transactionDatasource;
     private Transaction transaction;
@@ -89,7 +87,7 @@ public class EditTransactionActivity extends ListActivity implements TheListener
         if (currPref.equals("2")) {
             priceTextView.setText(String.format("%.2f", transacPrice) + " $");
         } else {
-            priceTextView.setText(Double.toString(transacPrice) + " €");
+            priceTextView.setText(String.format("%.2f", transacPrice) + " €");
         }
         selectedCategory = transaction.getCategory();
 
@@ -208,8 +206,8 @@ public class EditTransactionActivity extends ListActivity implements TheListener
 
     @Override
     protected void onPause() {
-        categoryDatasource.close();
-        transactionDatasource.close();
+//        categoryDatasource.close();
+//        transactionDatasource.close();
         super.onPause();
     }
 

@@ -101,7 +101,6 @@ public class CreateTransactionActivity extends ListActivity implements TheListen
             }
         });
 
-
         // Launch dialog on create
         launchDialog();
 

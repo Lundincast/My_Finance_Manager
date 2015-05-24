@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.lundincast.my_finance_manager.activities.model.Category;
 import com.lundincast.my_finance_manager.activities.model.Transaction;
 
 import java.sql.SQLException;
@@ -29,6 +30,10 @@ public class TransactionDataSource {
             DbSQLiteHelper.TRANSACTION_MONTH,
             DbSQLiteHelper.TRANSACTION_YEAR,
             DbSQLiteHelper.TRANSACTION_COMMENT };
+
+    private String[] priceAndCategoryColumns = {DbSQLiteHelper.TRANSACTION_ID,
+            DbSQLiteHelper.TRANSACTION_PRICE,
+            DbSQLiteHelper.TRANSACTION_CATEGORY};
 
     private String[] monthAndYearColumns = {DbSQLiteHelper.TRANSACTION_ID,
             DbSQLiteHelper.TRANSACTION_MONTH,
@@ -91,6 +96,12 @@ public class TransactionDataSource {
         + " = " + transaction.getId(), null);
     }
 
+    public void deleteAllRowsByCategory(Category category) {
+        String[] args = new String[] {category.getName()};
+        database.delete(DbSQLiteHelper.TABLE_TRANSACTIONS, DbSQLiteHelper.COLUMN_CATEGORY
+        + " = ? ", args);
+    }
+
     public Transaction getTransaction( long id) {
         Cursor cursor = database.query(DbSQLiteHelper.TABLE_TRANSACTIONS,
                 allColumns, DbSQLiteHelper.TRANSACTION_ID + " = " + id, null, null, null, null);
@@ -111,6 +122,18 @@ public class TransactionDataSource {
         cursor = database.query(DbSQLiteHelper.TABLE_TRANSACTIONS,
                 monthAndYearColumns, DbSQLiteHelper.TRANSACTION_DAY + " = ? AND " + DbSQLiteHelper.TRANSACTION_MONTH + " = ? AND " + DbSQLiteHelper.TRANSACTION_YEAR + " = ? ",
                 args, null, null, null);
+        return cursor;
+    }
+
+    public Cursor getTransactionsByMonth(Date date) {
+        Cursor cursor;
+        String[] args;
+        Calendar cal;
+        cal = Calendar.getInstance();
+        cal.setTime(date);
+        args = new String[] {String.valueOf(cal.get(Calendar.MONTH))};
+        cursor = database.query(DbSQLiteHelper.TABLE_TRANSACTIONS,
+                priceAndCategoryColumns, DbSQLiteHelper.TRANSACTION_MONTH + " = ? ", args, null, null, null);
         return cursor;
     }
 

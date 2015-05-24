@@ -8,13 +8,7 @@
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-    <android:uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="18" />
-    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <android:uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="18" />
+
 
     <application
         android:allowBackup="true"
@@ -27,14 +21,14 @@
             android:theme="@android:style/Theme.Holo.Light" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.name.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".activities.SettingsActivity"
             android:label="@string/action_settings"
-            android:theme="@android:style/Theme.Holo.Light" >
+            android:theme="@android:style/Theme.Holo.Light"
+            android:parentActivityName=".activities.MainActivity" >
         </activity>
         <activity
             android:name=".activities.ListCategoriesActivity"
@@ -70,7 +64,7 @@
         <activity
             android:name=".activities.CreateTransactionActivity"
             android:label="@string/title_activity_create_transaction"
-            android:parentActivityName=".activities.ListTransactionsActivity"
+            android:parentActivityName=".activities.MainActivity"
             android:theme="@android:style/Theme.Holo.Light"
             android:windowSoftInputMode="adjustResize" >
             <meta-data
@@ -80,8 +74,9 @@
         <activity
             android:name=".activities.EditTransactionActivity"
             android:label="Edit"
-            android:parentActivityName=".activities.ListTransactionsActivity"
-            android:theme="@android:style/Theme.Holo.Light" >
+            android:parentActivityName=".activities.MainActivity"
+            android:theme="@android:style/Theme.Holo.Light"
+            android:windowSoftInputMode="adjustResize" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.lundincast.my_finance_manager.activities.ListTransactionsActivity" />

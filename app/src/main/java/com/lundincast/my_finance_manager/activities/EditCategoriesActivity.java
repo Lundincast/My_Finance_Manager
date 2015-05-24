@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,16 +13,16 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.lundincast.my_finance_manager.R;
 import com.lundincast.my_finance_manager.activities.data.CategoriesDataSource;
+import com.lundincast.my_finance_manager.activities.data.TransactionDataSource;
 import com.lundincast.my_finance_manager.activities.model.Category;
 
 import java.sql.SQLException;
 
 public class EditCategoriesActivity extends Activity implements AdapterView.OnItemSelectedListener {
-
-    // TODO implement proper actionBar
 
     private CategoriesDataSource datasource;
     private Category category;
@@ -90,26 +91,42 @@ public class EditCategoriesActivity extends Activity implements AdapterView.OnIt
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.delete_action) {
-            new AlertDialog.Builder(this)
+            final TransactionDataSource transacDS = new TransactionDataSource(this);
+            try {
+                transacDS.open();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            final Cursor cursor = transacDS.getTransactionsPerCategory(category.getName());
+            AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle("Delete Category")
-                .setMessage("Are you sure ?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         datasource.deleteCategory(category);
+                        if (cursor.getCount() > 0) {
+                            transacDS.deleteAllRowsByCategory(category);
+                            Toast.makeText(getApplicationContext(), cursor.getCount() + " transaction(s) deleted", Toast.LENGTH_SHORT).show();
+                        }
                         Intent intent = new Intent(getApplicationContext(), ListCategoriesActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                     }
                 })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
                     }
-                })
-                .show();
+                });
+            if (cursor.getCount() == 0) {
+                builder.setMessage("Are you sure ?");
+            } else {
+                builder.setMessage(String.valueOf(cursor.getCount()) + " transaction(s) pertain to this category. Note that" +
+                        " deleting a category will also delete all transactions associated with it.");
+            }
+            builder.show();
         }
         if (id == R.id.accept_action) {
             final EditText categoryName = (EditText) findViewById(R.id.category_name);

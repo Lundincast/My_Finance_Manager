@@ -65,7 +65,7 @@ public class ListTransactionsActivity extends ListActivity {
         catFilter = catDatasource.getAllCategoriesStringList();
 
         cursor = datasource.getTransactionsGroupByUniqueMonthAndYear(null);
-        startManagingCursor(cursor);
+// TODO        startManagingCursor(cursor);
 
         adapter = new TransactionCursorTreeAdapter(cursor, this);
         final ExpandableListView lv = (ExpandableListView) getListView();

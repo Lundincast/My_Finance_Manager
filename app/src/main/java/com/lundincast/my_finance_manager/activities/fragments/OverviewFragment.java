@@ -1,88 +1,188 @@
 package com.lundincast.my_finance_manager.activities.fragments;
 
 import android.app.Fragment;
+import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.utils.ColorTemplate;
 import com.lundincast.my_finance_manager.R;
+import com.lundincast.my_finance_manager.activities.MainActivity;
+import com.lundincast.my_finance_manager.activities.data.DbSQLiteHelper;
+import com.lundincast.my_finance_manager.activities.model.Category;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 
-public class OverviewFragment extends Fragment {
+public class OverviewFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     private PieChart mChart;
+    private MainActivity activity;
+    private String[] monthsComplete = {"January", "February", "March", "April", "May", "June", "July", "August",
+            "September", "October", "November", "December"};
+    private String month;
+    private String year;
+    private ArrayList<String> values;
+    private int selected;
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        activity = (MainActivity) getActivity();
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         View v = inflater.inflate(R.layout.activity_overview, container, false);
 
+        // Set spinner data from Transaction table
+        Spinner spinner = (Spinner) v.findViewById(R.id.timeline_spinner);
+        values = new ArrayList<>();
+        Cursor cursor = activity.datasource.getTransactionsGroupByUniqueMonthAndYear(null);
+        while (cursor.moveToNext()) {
+            values.add(monthsComplete[Integer.parseInt(cursor.getString(1))] + " " + cursor.getString(2));
+        }
+        String[] from = new String[] {DbSQLiteHelper.TRANSACTION_MONTH,
+                DbSQLiteHelper.TRANSACTION_YEAR};
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, values);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
+        spinner.setSelection(activity.spinnerSelected);
+
+        // set up chart
         mChart = (PieChart) v.findViewById(R.id.chart);
         mChart.setDescription("");
 
-        // Typeface tf = Typeface.createFromAsset(getActivity().getAssets(), "OpenSans-Light.ttf");
-
-        // mChart.setCenterTextTypeface(tf);
-        mChart.setCenterText("Revenues");
-        mChart.setCenterTextSize(22f);
-        // mChart.setCenterTextTypeface(tf);
-
         // radius of the center hole in percent of maximum radius
-        mChart.setHoleRadius(45f);
-        mChart.setTransparentCircleRadius(50f);
+        mChart.setHoleRadius(50f);
+        mChart.setTransparentCircleRadius(55f);
 
         Legend l = mChart.getLegend();
-        l.setPosition(Legend.LegendPosition.RIGHT_OF_CHART);
+        l.setPosition(Legend.LegendPosition.RIGHT_OF_CHART_INSIDE);
 
-        mChart.setData(generatePieData());
+        mChart.setData(generatePieData(new Date()));
 
-        mChart.animateX(1000);
+        // Animate on first time init only
+        if (activity.firstOverviewFragInit == true) {
+            mChart.animateX(1000);
+        }
 
         return v;
     }
 
-    /**
-     * generates less data (1 DataSet, 4 values)
-     * @return
-     */
-    protected PieData generatePieData() {
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        activity.firstOverviewFragInit = false;
+        activity.spinnerSelected = selected;
+    }
 
-        int count = 4;
 
-        ArrayList<Entry> entries1 = new ArrayList<Entry>();
-        ArrayList<String> xVals = new ArrayList<String>();
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        // update selected item tracker in MainActivity
+        this.selected = position;
 
-        xVals.add("Quarter 1");
-        xVals.add("Quarter 2");
-        xVals.add("Quarter 3");
-        xVals.add("Quarter 4");
-
-        for(int i = 0; i < count; i++) {
-            xVals.add("entry" + (i+1));
-
-            entries1.add(new Entry((float) (Math.random() * 60) + 40, i));
+        String selected = (String) parent.getItemAtPosition(position);
+        String[] splited = selected.split("\\s+");
+        Date date = new Date(Integer.parseInt(splited[1]), Arrays.asList(monthsComplete).indexOf(splited[0]), 1);
+        mChart.setData(generatePieData(date));
+        mChart.invalidate();
+        if (activity.firstOverviewFragInit == true) {
+            mChart.animateX(1000);
         }
+    }
 
-        PieDataSet ds1 = new PieDataSet(entries1, "Quarterly Revenues 2014");
-        ds1.setColors(ColorTemplate.VORDIPLOM_COLORS);
-        ds1.setSliceSpace(2f);
-        ds1.setValueTextColor(Color.WHITE);
-        ds1.setValueTextSize(12f);
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
 
-        PieData d = new PieData(xVals, ds1);
-        // d.setValueTypeface(tf);
+    }
 
-        return d;
+
+    /**
+     * generates data
+     *
+     * @return PieData object
+     */
+    protected PieData generatePieData(Date date) {
+
+        ArrayList<String> values = new ArrayList<>();
+        ArrayList<Entry> entries = new ArrayList<>();
+        int position;
+
+        Cursor cursor = ((MainActivity) getActivity()).datasource.getTransactionsByMonth(date);
+        if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
+            return null;
+        } else {
+            do {
+                // extract category from cursor row
+                String category = cursor.getString(cursor.getColumnIndexOrThrow(DbSQLiteHelper.TRANSACTION_CATEGORY));
+                // search in values ArrayList if category exists. If it does, get position.
+                // If it doesn't, add category and get position
+                if (!values.contains(category)) {
+                    values.add(category);
+                }
+            } while (cursor.moveToNext());
+            int length = values.size();
+            double[] totals = new double[length];
+            cursor.moveToFirst();
+            do {
+                // extract price from cursor row
+                double price = cursor.getDouble(cursor.getColumnIndexOrThrow(DbSQLiteHelper.TRANSACTION_PRICE));
+                // extract category from cursor row
+                String category = cursor.getString(cursor.getColumnIndexOrThrow(DbSQLiteHelper.TRANSACTION_CATEGORY));
+                // Get category position in values ArrayList
+                position = values.indexOf(category);
+                // fill totals array with prices. Insert if new, add to value if exists.
+                totals[position] = totals[position] + price;
+            } while (cursor.moveToNext());
+
+            for (int i = 0; i < totals.length; i++) {
+                entries.add(new Entry((float) totals[i], i));
+
+            }
+
+            PieDataSet dataSet = new PieDataSet(entries, "");
+            // build colors array from resources
+            int[] colorsArray = new int[values.size()];
+            Category cat;
+            Resources res = getResources();
+            for (int i = 0; i < values.size(); i++) {
+                cat = activity.catDatasource.getCategoryByName(values.get(i));
+                colorsArray[i] = res.getColor(getResources().getIdentifier(cat.getColor(), "color", "com.lundincast.my_finance_manager"));
+            }
+            //Resources res = getResources();
+            dataSet.setColors(colorsArray);
+            dataSet.setSliceSpace(1f);
+            dataSet.setValueTextColor(Color.WHITE);
+            dataSet.setValueTextSize(12f);
+
+            PieData data = new PieData(values, dataSet);
+
+            return data;
+        }
     }
 
 }
+
+
+
+
+

@@ -57,8 +57,6 @@ public class ListTransactionsFragment extends ListFragment {
         catFilter = catDatasource.getAllCategoriesStringList();
 
         cursor = datasource.getTransactionsGroupByUniqueMonthAndYear(null);
-        getActivity().startManagingCursor(cursor);
-
         adapter = new TransactionCursorTreeAdapter(cursor, getActivity());
         final ExpandableListView lv = (ExpandableListView) getListView();
         lv.setAdapter(adapter);

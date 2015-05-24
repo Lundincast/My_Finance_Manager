@@ -4,11 +4,15 @@
 
     <item android:id="@+id/add_transaction"
         android:icon="@drawable/ic_action_new"
-        android:title="Add"
-        android:showAsAction="never" />
+        android:title="@string/action_add_expense"
+        android:showAsAction="ifRoom" />
 
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
+        android:showAsAction="never" />
+
+    <item android:id="@+id/action_feedback"
+        android:title="Feedback"
         android:showAsAction="never" />
 
 </menu>

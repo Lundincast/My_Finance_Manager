@@ -48,6 +48,10 @@ public class CategoryCursorAdapter extends CursorAdapter {
         String color = cursor.getString(cursor.getColumnIndexOrThrow(DbSQLiteHelper.COLUMN_COLOR));
         String name = cursor.getString(cursor.getColumnIndexOrThrow(DbSQLiteHelper.COLUMN_CATEGORY));
 
+        // Populate fields with extracted properties
+        String firstLetter = name.substring(0, 1).toUpperCase();
+        categoryColorTv.setText(firstLetter);
+
         datasource = new CategoriesDataSource(context);
         try {
             datasource.open();

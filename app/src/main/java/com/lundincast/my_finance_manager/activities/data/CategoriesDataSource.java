@@ -9,7 +9,7 @@ import com.lundincast.my_finance_manager.activities.model.Category;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
+
 
 /**
  * Created by lundincast on 21/02/15.
@@ -86,10 +86,8 @@ public class CategoriesDataSource {
 
     public Cursor getAllCategories() {
 
-        Cursor cursor = database.query(DbSQLiteHelper.TABLE_CATEGORIES,
+        return database.query(DbSQLiteHelper.TABLE_CATEGORIES,
                 allColumns, null, null, null, null, null);
-
-        return cursor;
     }
 
     public ArrayList<String> getAllCategoriesStringList() {
@@ -110,23 +108,6 @@ public class CategoriesDataSource {
         return catList;
     }
 
-    public List<Category> getAllCategoriesList() {
-        List<Category> categories = new ArrayList<Category>();
-
-        Cursor cursor = database.query(DbSQLiteHelper.TABLE_CATEGORIES,
-                allColumns, null, null, null, null, null);
-
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            Category category = cursorToCategory(cursor);
-            categories.add(category);
-            cursor.moveToNext();
-        }
-
-        // Make sure to close the cursor
-        cursor.close();
-        return categories;
-    }
 
     private Category cursorToCategory(Cursor cursor) {
         Category category = new Category();

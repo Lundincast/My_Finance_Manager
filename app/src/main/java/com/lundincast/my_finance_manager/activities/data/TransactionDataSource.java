@@ -9,10 +9,9 @@ import com.lundincast.my_finance_manager.activities.model.Category;
 import com.lundincast.my_finance_manager.activities.model.Transaction;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
+
 
 /**
  * Created by lundincast on 1/03/15.
@@ -68,12 +67,6 @@ public class TransactionDataSource {
         values.put(DbSQLiteHelper.TRANSACTION_YEAR, cal.get(Calendar.YEAR));
         values.put(DbSQLiteHelper.TRANSACTION_COMMENT, transaction.getComment());
         long insertId = database.insert(DbSQLiteHelper.TABLE_TRANSACTIONS, null, values);
-//        Cursor cursor = database.query(DbSQLiteHelper.TABLE_TRANSACTIONS,
-//                allColumns, DbSQLiteHelper.TRANSACTION_ID + " = " + insertId, null, null, null, null);
-//        cursor.moveToFirst();
-//        Transaction newTransaction = cursorToTransaction(cursor);
-//        cursor.close();
-//        return newTransaction;
     }
 
     public void updateTransaction(Transaction transaction) {
@@ -192,22 +185,6 @@ public class TransactionDataSource {
         return cursor;
     }
 
-    public Cursor getAllTransaction() {
-        List<Transaction> transactions = new ArrayList<Transaction>();
-
-        Cursor cursor = database.query(DbSQLiteHelper.TABLE_TRANSACTIONS,
-                allColumns, null, null, null, null, DbSQLiteHelper.TRANSACTION_DATE + " DESC");
-
-        //cursor.moveToFirst();
-        //while (!cursor.isAfterLast()) {
-        //    Transaction transaction = cursorToTransaction(cursor);
-        //    transactions.add(transaction);
-        //    cursor.moveToNext();
-        //}
-        // make sure to close the cursor
-        //cursor.close();
-        return cursor;
-    }
 
     private Transaction cursorToTransaction(Cursor cursor) {
 
@@ -225,27 +202,7 @@ public class TransactionDataSource {
         Date date = new Date(dateInt);
         String comment = cursor.getString(commentIndex);
 
-        // populate new Transaction object
-        Transaction transaction = new Transaction(id, price, category, date, comment);
+        return new Transaction(id, price, category, date, comment);
 
-        return transaction;
-
-//        Gson gson = new Gson();
-//        transaction.setId(cursor.getLong(0));
-//        transaction.setPrice(cursor.getShort(1));
-//        // Deserialize category from Json
-//        byte[] blob = cursor.getBlob(cursor.getColumnIndex(DbSQLiteHelper.TRANSACTION_CATEGORY));
-//        String json = new String(blob);
-//        Category category = gson.fromJson(json, Category.class);
-//        transaction.setCategory(category.getName());
-//        // Get date from String
-//        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/YYYY", Locale.getDefault());
-////        try {
-////            transaction.setDate(sdf.parse(cursor.getString(3)));
-////        } catch (ParseException e) {
-////            e.printStackTrace();
-////        }
-//        transaction.setComment(cursor.getString(4));
-//        return transaction;
     }
 }

@@ -77,9 +77,6 @@
             android:parentActivityName=".activities.MainActivity"
             android:theme="@android:style/Theme.Holo.Light"
             android:windowSoftInputMode="adjustResize" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.lundincast.my_finance_manager.activities.ListTransactionsActivity" />
         </activity>
 
 

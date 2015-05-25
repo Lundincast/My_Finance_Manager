@@ -12,7 +12,7 @@ import android.support.v4.app.NotificationCompat;
 
 import com.lundincast.my_finance_manager.R;
 import com.lundincast.my_finance_manager.activities.CreateTransactionActivity;
-import com.lundincast.my_finance_manager.activities.ListTransactionsActivity;
+import com.lundincast.my_finance_manager.activities.MainActivity;
 import com.lundincast.my_finance_manager.activities.data.TransactionDataSource;
 
 import java.sql.SQLException;
@@ -62,12 +62,11 @@ public class NotificationService extends Service {
 
     private void setupNotification() {
         mManager = (NotificationManager) this.getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
-        Intent intent1 = new Intent(getApplicationContext(), ListTransactionsActivity.class);
 
         PendingIntent pendingAddIntent = PendingIntent.getActivity(
                 this, 0, new Intent(getApplicationContext(), CreateTransactionActivity.class), PendingIntent.FLAG_ONE_SHOT);
         PendingIntent pendingListIntent = PendingIntent.getActivity(
-                this, 0, new Intent(getApplicationContext(), ListTransactionsActivity.class), PendingIntent.FLAG_ONE_SHOT);
+                this, 0, new Intent(getApplicationContext(), MainActivity.class), PendingIntent.FLAG_ONE_SHOT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.appicon)

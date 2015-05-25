@@ -41,7 +41,7 @@ public class ListTransactionsActivity extends ListActivity {
     ArrayList<String> catFilter;
     private long[] expandedIds;
 
-    // TODO notification triggered on app launch
+    // TODO notification triggered on ap
 
 
     @Override

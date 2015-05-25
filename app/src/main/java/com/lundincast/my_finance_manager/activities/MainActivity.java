@@ -1,24 +1,30 @@
 package com.lundincast.my_finance_manager.activities;
 
 import android.app.ActionBar;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.lundincast.my_finance_manager.R;
+import com.lundincast.my_finance_manager.activities.BroadcastReceivers.NotificationAlarmReceiver;
 import com.lundincast.my_finance_manager.activities.data.CategoriesDataSource;
 import com.lundincast.my_finance_manager.activities.data.TransactionDataSource;
 import com.lundincast.my_finance_manager.activities.fragments.ListTransactionsFragment;
 import com.lundincast.my_finance_manager.activities.fragments.OverviewFragment;
 
 import java.sql.SQLException;
+import java.util.Calendar;
 
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
 
@@ -26,6 +32,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     public CategoriesDataSource catDatasource;
     public boolean firstOverviewFragInit = true;
     public int spinnerSelected = 1;
+    SharedPreferences sharedPref;
 
     private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
     private static final String STATE_SELECTED_SPINNER_ITEM = "selected_spinner_item";
@@ -66,6 +73,19 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             int id = extras.getInt("selectedTab");
             //actionBar.setSelectedNavigationItem(id);
         }
+
+        // Set intent to be broadcast for reminder
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        Intent intent = new Intent(this, NotificationAlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        // Find out time difference between "now" and next 23h
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(System.currentTimeMillis());
+        cal.set(Calendar.HOUR_OF_DAY, sharedPref.getInt("hour_of_day_alarm", 23));
+        cal.set(Calendar.MINUTE, sharedPref.getInt("minute_of_day_alarm", 00));
+        // Set AlarmManager to trigger broadcast
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.setInexactRepeating(AlarmManager.RTC, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
 
     }
 

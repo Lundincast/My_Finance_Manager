@@ -80,7 +80,7 @@ public class OverviewFragment extends Fragment implements AdapterView.OnItemSele
         mChart.setData(generatePieData(new Date()));
 
         // Animate on first time init only
-        if (activity.firstOverviewFragInit == true) {
+        if (activity.firstOverviewFragInit) {
             mChart.animateX(1000);
         }
 
@@ -105,7 +105,7 @@ public class OverviewFragment extends Fragment implements AdapterView.OnItemSele
         Date date = new Date(Integer.parseInt(splited[1]), Arrays.asList(monthsComplete).indexOf(splited[0]), 1);
         mChart.setData(generatePieData(date));
         mChart.invalidate();
-        if (activity.firstOverviewFragInit == true) {
+        if (activity.firstOverviewFragInit) {
             mChart.animateX(1000);
         }
     }
@@ -174,9 +174,7 @@ public class OverviewFragment extends Fragment implements AdapterView.OnItemSele
             dataSet.setValueTextColor(Color.WHITE);
             dataSet.setValueTextSize(12f);
 
-            PieData data = new PieData(values, dataSet);
-
-            return data;
+            return new PieData(values, dataSet);
         }
     }
 

@@ -14,7 +14,6 @@
     <string-array name="feedbackoptions">
         <item>Rate App</item>
         <item>Report a bug</item>
-        <item>Leave a message</item>
     </string-array>
 
 

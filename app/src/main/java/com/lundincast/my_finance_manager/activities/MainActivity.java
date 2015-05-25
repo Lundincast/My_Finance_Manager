@@ -166,15 +166,16 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case 0:
-
+                                String rateAppUrl = "https://play.google.com/store/apps/details?id=com.lundincast.my_finance_manager";
+                                Intent rateAppIntent = new Intent(Intent.ACTION_VIEW);
+                                rateAppIntent.setData(Uri.parse(rateAppUrl));
+                                startActivity(rateAppIntent);
                                 break;
                             case 1:
-                                String url = "https://github.com/Lundincast/My_Finance_Manager/issues/new";
+                                String url = "http://lundincast.com";
                                 Intent intent = new Intent(Intent.ACTION_VIEW);
                                 intent.setData(Uri.parse(url));
                                 startActivity(intent);
-                            case 2:
-
                                 break;
                         }
                     }

@@ -69,7 +69,7 @@ public class NotificationService extends Service {
                 this, 0, new Intent(getApplicationContext(), MainActivity.class), PendingIntent.FLAG_ONE_SHOT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.appicon)
+                .setSmallIcon(R.drawable.appicon128x128)
                 .setContentTitle("Too good to be true !")
                 .setContentText("Haven't you spent any money today ?")
                 .addAction(R.drawable.ic_action_new, "Add expense", pendingAddIntent)

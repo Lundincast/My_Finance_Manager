@@ -41,5 +41,6 @@
     <string name="transaction_comment_hint">Comment</string>
     <string name="transaction_date">Date</string>
     <string name="transaction_comment">Note</string>
+    <string name="feedback">Feedback</string>
 
 </resources>

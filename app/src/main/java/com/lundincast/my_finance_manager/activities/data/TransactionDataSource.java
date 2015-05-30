@@ -67,6 +67,7 @@ public class TransactionDataSource {
         values.put(DbSQLiteHelper.TRANSACTION_YEAR, cal.get(Calendar.YEAR));
         values.put(DbSQLiteHelper.TRANSACTION_COMMENT, transaction.getComment());
         long insertId = database.insert(DbSQLiteHelper.TABLE_TRANSACTIONS, null, values);
+        int i = 0;
     }
 
     public void updateTransaction(Transaction transaction) {

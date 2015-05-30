@@ -21,6 +21,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lundincast.my_finance_manager.R;
 import com.lundincast.my_finance_manager.activities.data.CategoriesDataSource;
@@ -78,6 +79,7 @@ public class CreateTransactionActivity extends ListActivity implements TheListen
             }
         });
 
+
         ListView lv = getListView();
         lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         lv.setSelector(android.R.color.darker_gray);
@@ -121,6 +123,9 @@ public class CreateTransactionActivity extends ListActivity implements TheListen
         final EditText userInput = (EditText) priceInputView.findViewById(R.id.editTextDialogPriceInput);
         userInput.setRawInputType(Configuration.KEYBOARD_12KEY);
         userInput.setFilters(new InputFilter[] {new DecimalDigitsInputFilter(5, 2)});
+        String transacPriceString = transactionPrice.getText().toString();
+        transacPriceString = transacPriceString.substring(0, transacPriceString.length() - 2);
+        userInput.setText(transacPriceString);
 
         // set dialog message
         builder
@@ -136,7 +141,11 @@ public class CreateTransactionActivity extends ListActivity implements TheListen
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                transactionPrice.setText(userInput.getText().toString() + " €");
+                                if (!userInput.getText().toString().equals("")) {
+                                    transactionPrice.setText(userInput.getText().toString() + " €");
+                                } else {
+                                    transactionPrice.setText("00.00 €");
+                                }
                             }
                         });
 
@@ -198,12 +207,16 @@ public class CreateTransactionActivity extends ListActivity implements TheListen
             double transacPrice = Double.parseDouble(transacPriceString);
             String transacComment = transactionComment.getText().toString();
 
-            Transaction transaction = new Transaction(transacPrice, selectedCategory, selectedDate, transacComment);
-            transacDatasource.createTransaction(transaction);
+            if (selectedCategory == null) {
+                Toast.makeText(this, "You have to select a category to create a transaction", Toast.LENGTH_SHORT).show();
+            } else {
+                Transaction transaction = new Transaction(transacPrice, selectedCategory, selectedDate, transacComment);
+                transacDatasource.createTransaction(transaction);
 
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }
 
         return super.onOptionsItemSelected(item);

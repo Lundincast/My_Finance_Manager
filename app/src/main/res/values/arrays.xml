@@ -20,27 +20,29 @@
     <string-array name="colors_array">
         <item>Red</item>
         <item>Blue</item>
+        <item>Dark blue</item>
         <item>Yellow</item>
+        <item>Orange</item>
         <item>Green</item>
-        <item>Black</item>
-        <item>White</item>
+        <item>Dark green</item>
+        <item>Grey</item>
         <item>Pink</item>
         <item>Brown</item>
         <item>Purple</item>
-        <item>Orange</item>
     </string-array>
 
     <string-array name="colors_value">
         <item>#FF8D9A</item>
         <item>#87EAFE</item>
+        <item>#192980</item>
         <item>#FFF892</item>
+        <item>#FFD390</item>
         <item>#C2FF93</item>
-        <item>#000000</item>
-        <item>#FFFFFF</item>
+        <item>#085D3C</item>
+        <item>#B5B5B5</item>
         <item>#E879A4</item>
         <item>#775530</item>
         <item>#7E0B80</item>
-        <item>#FFD390</item>
     </string-array>
     
 </resources>

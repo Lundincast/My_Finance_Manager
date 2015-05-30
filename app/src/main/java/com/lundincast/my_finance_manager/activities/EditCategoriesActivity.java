@@ -2,13 +2,16 @@ package com.lundincast.my_finance_manager.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -27,13 +30,14 @@ public class EditCategoriesActivity extends Activity implements AdapterView.OnIt
     private CategoriesDataSource datasource;
     private Category category;
     private String color;
+    private EditText nameEditText;
     private Spinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_categories);
-        EditText text = (EditText) findViewById(R.id.category_name);
+        nameEditText = (EditText) findViewById(R.id.category_name);
         spinner = (Spinner) findViewById(R.id.category_color);
 
         datasource = new CategoriesDataSource(this);
@@ -50,7 +54,7 @@ public class EditCategoriesActivity extends Activity implements AdapterView.OnIt
         {
             long id = extras.getLong("categoryId");
             this.category = datasource.getCategory(id);
-            text.setText((CharSequence) category.getName());
+            nameEditText.setText((CharSequence) category.getName());
             ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                                                                     R.array.colors_array,
                                                                     android.R.layout.simple_spinner_item);
@@ -59,6 +63,14 @@ public class EditCategoriesActivity extends Activity implements AdapterView.OnIt
             spinner.setAdapter(adapter);
             spinner.setSelection(spinnerPosition);
             spinner.setOnItemSelectedListener(this);
+            spinner.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(nameEditText.getWindowToken(), 0);
+                    return false;
+                }
+            });
         }
 
     }
@@ -130,13 +142,17 @@ public class EditCategoriesActivity extends Activity implements AdapterView.OnIt
         }
         if (id == R.id.accept_action) {
             final EditText categoryName = (EditText) findViewById(R.id.category_name);
-            category.setName(categoryName.getText().toString());
-            category.setColor(spinner.getSelectedItem().toString());
-            datasource.updateCategory(category);
-            Intent intent = new Intent(getApplicationContext(), ListCategoriesActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            EditCategoriesActivity.this.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            if (categoryName.getText().toString().equals("")) {
+                Toast.makeText(this, "Category name can't be empty", Toast.LENGTH_SHORT).show();
+            } else {
+                category.setName(categoryName.getText().toString());
+                category.setColor(spinner.getSelectedItem().toString());
+                datasource.updateCategory(category);
+                Intent intent = new Intent(getApplicationContext(), ListCategoriesActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                EditCategoriesActivity.this.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            }
         }
 
         return super.onOptionsItemSelected(item);

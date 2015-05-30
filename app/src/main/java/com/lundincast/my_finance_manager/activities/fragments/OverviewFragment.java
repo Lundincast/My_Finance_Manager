@@ -163,12 +163,18 @@ public class OverviewFragment extends Fragment implements AdapterView.OnItemSele
             // build colors array from resources
             int[] colorsArray = new int[values.size()];
             Category cat;
+            String colorValue;
             Resources res = getResources();
             for (int i = 0; i < values.size(); i++) {
                 cat = activity.catDatasource.getCategoryByName(values.get(i));
-                colorsArray[i] = res.getColor(getResources().getIdentifier(cat.getColor(), "color", "com.lundincast.my_finance_manager"));
+                if (cat.getColor().contains(" ")) {
+                    colorValue = cat.getColor().replaceAll(" ", "_");
+                } else {
+                    colorValue = cat.getColor();
+                }
+
+                colorsArray[i] = res.getColor(getResources().getIdentifier(colorValue, "color", "com.lundincast.my_finance_manager"));
             }
-            //Resources res = getResources();
             dataSet.setColors(colorsArray);
             dataSet.setSliceSpace(1f);
             dataSet.setValueTextColor(Color.WHITE);

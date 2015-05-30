@@ -1,15 +1,19 @@
 package com.lundincast.my_finance_manager.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.lundincast.my_finance_manager.R;
 import com.lundincast.my_finance_manager.activities.data.CategoriesDataSource;
@@ -20,6 +24,7 @@ public class CreateCategoriesActivity extends Activity implements AdapterView.On
 
     private CategoriesDataSource datasource;
     private String color;
+    private EditText nameEditText;
 
     private static final String TAG = "ListCategoriesActivity";
 
@@ -35,6 +40,7 @@ public class CreateCategoriesActivity extends Activity implements AdapterView.On
             e.printStackTrace();
         }
 
+        nameEditText = (EditText) findViewById(R.id.category_name);
         Spinner spinner = (Spinner) findViewById(R.id.category_color);
         // create an ArrayAdapter using the colors string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -45,6 +51,14 @@ public class CreateCategoriesActivity extends Activity implements AdapterView.On
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
+        spinner.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(nameEditText.getWindowToken(), 0);
+                return false;
+            }
+        });
         // Set default color to red
         color = "red";
 
@@ -95,13 +109,17 @@ public class CreateCategoriesActivity extends Activity implements AdapterView.On
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_new) {
-                final EditText categoryName = (EditText) findViewById(R.id.category_name);
-                String category = categoryName.getText().toString();
+            final EditText categoryName = (EditText) findViewById(R.id.category_name);
+            String category = categoryName.getText().toString();
+            if (category.equals("")) {
+                Toast.makeText(this, "Category name can't be empty", Toast.LENGTH_SHORT).show();
+            } else {
                 datasource.createCategory(category, color);
                 Intent intent = new Intent(this, ListCategoriesActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 CreateCategoriesActivity.this.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            }
         }
 
         return super.onOptionsItemSelected(item);

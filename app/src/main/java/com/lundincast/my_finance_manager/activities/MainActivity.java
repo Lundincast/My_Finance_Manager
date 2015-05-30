@@ -19,10 +19,12 @@ import android.view.MenuItem;
 import com.lundincast.my_finance_manager.R;
 import com.lundincast.my_finance_manager.activities.BroadcastReceivers.NotificationAlarmReceiver;
 import com.lundincast.my_finance_manager.activities.data.CategoriesDataSource;
+import com.lundincast.my_finance_manager.activities.data.FirstTimeDataBaseHelper;
 import com.lundincast.my_finance_manager.activities.data.TransactionDataSource;
 import com.lundincast.my_finance_manager.activities.fragments.ListTransactionsFragment;
 import com.lundincast.my_finance_manager.activities.fragments.OverviewFragment;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Calendar;
 
@@ -31,7 +33,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     public TransactionDataSource datasource;
     public CategoriesDataSource catDatasource;
     public boolean firstOverviewFragInit = true;
-    public int spinnerSelected = 1;
+    public int spinnerSelected = 0;
     SharedPreferences sharedPref;
 
     private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
@@ -41,6 +43,20 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Check if a database file exists already. If it doesn't, it's the first time the
+        // app is launch so we create a db and load the shipped database file situated in the
+        // asset folder
+        FirstTimeDataBaseHelper dbHelper = new FirstTimeDataBaseHelper(this);
+        try {
+
+            dbHelper.createDataBase();
+
+        } catch (IOException ioe) {
+
+            throw new Error("Unable to create database");
+
+        }
 
         // Initialize database connection, centralized in MainActivity and
         // available to all fragments
@@ -78,11 +94,17 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         Intent intent = new Intent(this, NotificationAlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        // Find out time difference between "now" and next 23h
+        // Set calendar to time defined in preferences
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
         cal.set(Calendar.HOUR_OF_DAY, sharedPref.getInt("hour_of_day_alarm", 23));
         cal.set(Calendar.MINUTE, sharedPref.getInt("minute_of_day_alarm", 00));
+        // Compare it with current time. If it is lower, set DAY + 1
+        Calendar cal2 = Calendar.getInstance();
+        cal2.setTimeInMillis(System.currentTimeMillis());
+        if (cal.getTimeInMillis() < cal2.getTimeInMillis()) {
+            cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) + 1);
+        }
         // Set AlarmManager to trigger broadcast
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarmManager.setInexactRepeating(AlarmManager.RTC, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);

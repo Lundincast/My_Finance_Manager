@@ -10,6 +10,8 @@ import android.util.Log;
  */
 public class DbSQLiteHelper extends SQLiteOpenHelper {
 
+    private final Context context;
+
     // All static variables
     // Database version
     private static final int DATABASE_VERSION = 1;
@@ -53,6 +55,7 @@ public class DbSQLiteHelper extends SQLiteOpenHelper {
 
     public DbSQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     @Override

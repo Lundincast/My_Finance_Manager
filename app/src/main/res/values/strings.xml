@@ -42,5 +42,7 @@
     <string name="transaction_date">Date</string>
     <string name="transaction_comment">Note</string>
     <string name="feedback">Feedback</string>
+    <string name="name_field">Name</string>
+    <string name="color_field">color</string>
 
 </resources>

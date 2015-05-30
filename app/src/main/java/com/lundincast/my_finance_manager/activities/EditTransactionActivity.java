@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.InputFilter;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -49,6 +48,7 @@ public class EditTransactionActivity extends ListActivity implements TheListener
     private String selectedCategory;
     private Date selectedDate;
     private CategoryCursorAdapter adapter;
+    private TextView transactionPrice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,8 +112,8 @@ public class EditTransactionActivity extends ListActivity implements TheListener
         commentEditText.setText(transaction.getComment());
 
         // set onClick listener on price TextView
-        priceTextView = (TextView) findViewById(R.id.transaction_price);
-        priceTextView.setOnClickListener(new View.OnClickListener() {
+        transactionPrice = (TextView) findViewById(R.id.transaction_price);
+        transactionPrice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 launchDialog();
@@ -173,8 +173,11 @@ public class EditTransactionActivity extends ListActivity implements TheListener
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Log.w("FINANCE_MANAGER", userInput.getText().toString());
-                                EditTransactionActivity.this.priceTextView.setText(userInput.getText().toString() + " €");
+                                if (!userInput.getText().toString().equals("")) {
+                                    transactionPrice.setText(userInput.getText().toString() + " €");
+                                } else {
+                                    transactionPrice.setText("00.00 €");
+                                }
                             }
                         });
 

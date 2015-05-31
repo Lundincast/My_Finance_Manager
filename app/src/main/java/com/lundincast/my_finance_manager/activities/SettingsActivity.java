@@ -6,6 +6,8 @@ import android.app.DialogFragment;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -84,6 +86,15 @@ public class SettingsActivity extends PreferenceActivity {
                 return false;
             }
         });
+
+        // set app version
+        Preference versionPref = (Preference) findPreference("pref_key_about");
+        try {
+            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            versionPref.setSummary("App version " + pInfo.versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
 
     }
 

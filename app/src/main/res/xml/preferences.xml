@@ -45,6 +45,6 @@
         <Preference
             android:key="pref_key_about"
             android:title="@string/pref_title_about"
-            android:summary="App version 1.0.0"/>
+            android:summary="App version 1.0.0" />
     </PreferenceCategory>
 </PreferenceScreen>

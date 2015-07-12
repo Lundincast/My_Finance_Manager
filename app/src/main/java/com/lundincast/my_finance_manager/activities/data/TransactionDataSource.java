@@ -106,6 +106,12 @@ public class TransactionDataSource {
     }
 
 
+    public Cursor getAllTransaction() {
+        return database.query(DbSQLiteHelper.TABLE_TRANSACTIONS,
+                allColumns, null, null, null, null, DbSQLiteHelper.TRANSACTION_DATE + " DESC");
+    }
+
+
     public Cursor getTransactionByDate(Date date) {
         Cursor cursor;
         String[] args;

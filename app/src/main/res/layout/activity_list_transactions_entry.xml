@@ -58,4 +58,10 @@
         android:elegantTextHeight="true"
         android:gravity="center_vertical|right" />
 
+    <TextView
+        android:id="@+id/hidden_id"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
 </LinearLayout>

@@ -57,26 +57,30 @@ public class ListTransactionsFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mRecyclerView = (RecyclerView) getView().findViewById(R.id.recycler_view);
-        mLayoutManager = new LinearLayoutManager(getActivity());
-
-        final Parcelable eimSavedState = (savedInstanceState != null) ? savedInstanceState.getParcelable(SAVED_STATE_EXPANDABLE_ITEM_MANAGER) : null;
-        mRecyclerViewExpandableItemManager = new RecyclerViewExpandableItemManager(eimSavedState);
-
         // Get cursor
         MainActivity activity = (MainActivity) getActivity();
         Cursor cursor = activity.datasource.getAllTransaction();
-        final MyExpandableItemAdapter myItemAdapter = new MyExpandableItemAdapter(getActivity(), new TransactionExpandableDataProvider(getActivity(), cursor));
+        if (cursor.getCount() != 0) {
 
-        mAdapter = myItemAdapter;
+            mRecyclerView = (RecyclerView) getView().findViewById(R.id.recycler_view);
+            mLayoutManager = new LinearLayoutManager(getActivity());
 
-        mWrappedAdapter = mRecyclerViewExpandableItemManager.createWrappedAdapter(myItemAdapter);
+            final Parcelable eimSavedState = (savedInstanceState != null) ? savedInstanceState.getParcelable(SAVED_STATE_EXPANDABLE_ITEM_MANAGER) : null;
+            mRecyclerViewExpandableItemManager = new RecyclerViewExpandableItemManager(eimSavedState);
 
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(mWrappedAdapter);
-        mRecyclerView.setHasFixedSize(false);
 
-        mRecyclerViewExpandableItemManager.attachRecyclerView(mRecyclerView);
+            final MyExpandableItemAdapter myItemAdapter = new MyExpandableItemAdapter(getActivity(), new TransactionExpandableDataProvider(getActivity(), cursor));
+
+            mAdapter = myItemAdapter;
+
+            mWrappedAdapter = mRecyclerViewExpandableItemManager.createWrappedAdapter(myItemAdapter);
+
+            mRecyclerView.setLayoutManager(mLayoutManager);
+            mRecyclerView.setAdapter(mWrappedAdapter);
+            mRecyclerView.setHasFixedSize(false);
+
+            mRecyclerViewExpandableItemManager.attachRecyclerView(mRecyclerView);
+        }
 
     }
 

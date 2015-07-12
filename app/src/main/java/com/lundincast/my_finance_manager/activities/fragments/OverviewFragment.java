@@ -51,20 +51,24 @@ public class OverviewFragment extends Fragment implements AdapterView.OnItemSele
 
         View v = inflater.inflate(R.layout.activity_overview, container, false);
 
-        // Set spinner data from Transaction table
         Spinner spinner = (Spinner) v.findViewById(R.id.timeline_spinner);
-        values = new ArrayList<>();
         Cursor cursor = activity.datasource.getTransactionsGroupByUniqueMonthAndYear(null);
-        while (cursor.moveToNext()) {
-            values.add(monthsComplete[Integer.parseInt(cursor.getString(1))] + " " + cursor.getString(2));
+        if (cursor.getCount() == 0) {
+            spinner.setVisibility(View.GONE);
+        } else {
+            // Set spinner data from Transaction table
+            values = new ArrayList<>();
+            while (cursor.moveToNext()) {
+                values.add(monthsComplete[Integer.parseInt(cursor.getString(1))] + " " + cursor.getString(2));
+            }
+            String[] from = new String[]{DbSQLiteHelper.TRANSACTION_MONTH,
+                    DbSQLiteHelper.TRANSACTION_YEAR};
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, values);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(adapter);
+            spinner.setOnItemSelectedListener(this);
+            spinner.setSelection(activity.spinnerSelected);
         }
-        String[] from = new String[] {DbSQLiteHelper.TRANSACTION_MONTH,
-                DbSQLiteHelper.TRANSACTION_YEAR};
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, values);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(this);
-        spinner.setSelection(activity.spinnerSelected);
 
         // set up chart
         mChart = (PieChart) v.findViewById(R.id.chart);

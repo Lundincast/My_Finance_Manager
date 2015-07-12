@@ -6,6 +6,7 @@ package com.lundincast.my_finance_manager.activities.data;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,9 @@ import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemAda
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemViewHolder;
 import com.lundincast.my_finance_manager.R;
 import com.lundincast.my_finance_manager.activities.EditTransactionActivity;
+import com.lundincast.my_finance_manager.activities.model.Category;
+
+import java.sql.SQLException;
 
 // import com.h6ah4i.android.example.advrecyclerview.R;
 //import com.h6ah4i.android.example.advrecyclerview.common.compat.MorphButtonCompat;
@@ -61,6 +65,7 @@ public class MyExpandableItemAdapter
         public TextView mNameTvChild;
         public TextView mDateTvChild;
         public TextView mPriceTvChild;
+        public TextView mCategoryChild;
         public TextView mHiddenIdChild;
         public ViewHolderClicks mListener;
 
@@ -70,6 +75,7 @@ public class MyExpandableItemAdapter
             mNameTvChild = (TextView) v.findViewById(R.id.comment_entry);
             mDateTvChild = (TextView) v.findViewById(R.id.name_entry);
             mPriceTvChild = (TextView) v.findViewById(R.id.transaction_price);
+            mCategoryChild = (TextView) v.findViewById(R.id.category_icon);
             mHiddenIdChild = (TextView) v.findViewById(R.id.hidden_id);
             v.setOnClickListener(this);
         }
@@ -190,6 +196,32 @@ public class MyExpandableItemAdapter
         holder.mDateTvChild.setText(String.valueOf(item.getChildDate()));
         holder.mPriceTvChild.setText(String.valueOf(item.getChildPrice()));
         holder.mHiddenIdChild.setText(String.valueOf(item.getTransactionId()));
+        // Extract first letter from category and display it
+        String categoryName = item.getChildCategory();
+        String firstLetter = categoryName.substring(0, 1).toUpperCase();
+        holder.mCategoryChild.setText(firstLetter);
+        // get category color and disply it
+        CategoriesDataSource catDatasource = new CategoriesDataSource(mContext);
+        try {
+            catDatasource.open();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        Category catObj = catDatasource.getCategoryByName(categoryName);
+        catDatasource.close();
+        String color = catObj.getColor();
+        String[] colorsArray =  mContext.getResources().getStringArray(R.array.colors_array);
+        String[] colorValue = mContext.getResources().getStringArray(R.array.colors_value);
+
+        int it = 0;
+        for (String s: colorsArray) {
+            if (s.equals(color)) {
+                color = colorValue[it];
+                break;
+            }
+            it++;
+        }
+        holder.mCategoryChild.setBackgroundColor(Color.parseColor(color));
 
         // mark as clickable
         holder.itemView.setClickable(true);

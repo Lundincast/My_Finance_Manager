@@ -87,9 +87,10 @@ public class TransactionExpandableDataProvider {
                 } else {
                     formattedChildPrice = String.format("%.2f", childPrice) + " €";
                 }
+                final String childCategory = cursor.getString(cursor.getColumnIndexOrThrow(DbSQLiteHelper.TRANSACTION_CATEGORY));
                 final int childSwipeReaction = RecyclerViewSwipeManager.REACTION_CAN_SWIPE_LEFT | RecyclerViewSwipeManager.REACTION_CAN_SWIPE_RIGHT;
 
-                children.add(new ConcreteChildData(childId, childTransactionId, childName, formattedChildPrice, childDate, childSwipeReaction));
+                children.add(new ConcreteChildData(childId, childTransactionId, childName, formattedChildPrice, childDate, childCategory, childSwipeReaction));
 
         } while (cursor.moveToNext());
 
@@ -301,15 +302,17 @@ public class TransactionExpandableDataProvider {
         private final String mName;
         private final String mPrice;
         private final String mDate;
+        private final String mCategory;
         private final int mSwipeReaction;
         private boolean mPinnedToSwipeLeft;
 
-        ConcreteChildData(long id, long transactionId, String name, String price, String date, int swipeReaction) {
+        ConcreteChildData(long id, long transactionId, String name, String price, String date, String category, int swipeReaction) {
             mId = id;
             mTransactionId = transactionId;
             mName = name;
             mPrice = price;
             mDate = date;
+            mCategory = category;
             mSwipeReaction = swipeReaction;
         }
 
@@ -341,6 +344,11 @@ public class TransactionExpandableDataProvider {
         @Override
         public String getChildDate() {
             return mDate;
+        }
+
+        @Override
+        public String getChildCategory() {
+            return mCategory;
         }
 
         @Override
@@ -379,5 +387,6 @@ public class TransactionExpandableDataProvider {
         public abstract String getChildName();
         public abstract String getChildPrice();
         public abstract String getChildDate();
+        public abstract String getChildCategory();
     }
 }

@@ -80,6 +80,7 @@ public class ListTransactionsFragment extends Fragment {
             mRecyclerView.setHasFixedSize(false);
 
             mRecyclerViewExpandableItemManager.attachRecyclerView(mRecyclerView);
+
         }
 
     }

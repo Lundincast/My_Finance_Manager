@@ -37,14 +37,12 @@ public class MyExpandableItemAdapter
     public static abstract class MyBaseViewHolder extends AbstractExpandableItemViewHolder {
         public FrameLayout mContainer;
         public View mDragHandle;
-        public TextView mTextView;
 
 
         public MyBaseViewHolder(View v) {
             super(v);
             mContainer = (FrameLayout) v.findViewById(R.id.container);
 //            mDragHandle = v.findViewById(R.id.drag_handle);
-            mTextView = (TextView) v.findViewById(R.id.transaction_list_header);
 
             // hide the drag handle
 //            mDragHandle.setVisibility(View.GONE);
@@ -52,10 +50,14 @@ public class MyExpandableItemAdapter
     }
 
     public static class MyGroupViewHolder extends MyBaseViewHolder {
+        public TextView mTextView;
+        public TextView mGroupTotalPrice;
 //        public MorphButtonCompat mMorphButton;
 
         public MyGroupViewHolder(View v) {
             super(v);
+            mTextView = (TextView) v.findViewById(R.id.transaction_list_header);
+            mGroupTotalPrice = (TextView) v.findViewById(R.id.group_total_price);
 //            mMorphButton = new MorphButtonCompat(v.findViewById(R.id.indicator));
         }
     }
@@ -159,6 +161,8 @@ public class MyExpandableItemAdapter
 
         // set text
         holder.mTextView.setText(item.getText());
+        // set total price
+        holder.mGroupTotalPrice.setText(item.getTotalPrice());
 
         // mark as clickable
         holder.itemView.setClickable(true);

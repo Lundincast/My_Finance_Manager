@@ -1,21 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--suppress AndroidElementNotAllowed -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="5dp"
-    android:elevation="2dp"
-    android:padding="8dp"
-    android:paddingLeft="15dp"
-    android:background="#E5E5E5">
+    android:layout_height="50dp"
+    android:layout_margin="4dp"
+    android:elevation="4dp" >
 
-    <TextView
-        android:id="@+id/transaction_list_header"
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:textSize="20dp"
-        android:textColor="#4BA2E9"
-        android:paddingLeft="30dp"
-        android:text="January"/>
+        android:layout_height="fill_parent"
+        card_view:cardCornerRadius="4dp" >
+
+        <TextView
+            android:id="@+id/transaction_list_header"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textColor="#4BA2E9"
+            android:paddingLeft="30dp"
+            android:text="January"/>
+
+        <TextView
+            android:id="@+id/group_total_price"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_gravity="right"
+            android:gravity="center_vertical"
+            android:paddingRight="15dp"
+            android:text="512,95 €"
+            android:textColor="#4BA2E9"
+            android:textSize="20sp"
+            android:textStyle="italic" />
+
+
+
+    </android.support.v7.widget.CardView>
 
 </LinearLayout>

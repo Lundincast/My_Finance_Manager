@@ -38,6 +38,7 @@ public class TransactionExpandableDataProvider {
 
         long groupId = -1;
         long childId = 0;
+        double groupTotalPrice = 0;
         String currentMonth = "";
         ConcreteGroupData group = null;
         List<ChildData> children = new ArrayList<>();
@@ -48,12 +49,24 @@ public class TransactionExpandableDataProvider {
         String[] monthsComplete = {"January", "February", "March", "April", "May", "June", "July", "August",
                 "September", "October", "November", "December"};
 
+        // get preferences for currency display
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        String currPref = sharedPref.getString("pref_key_currency", "1");
+
         cursor.moveToFirst();
         do {
             String month = cursor.getString(cursor.getColumnIndexOrThrow(DbSQLiteHelper.TRANSACTION_MONTH));
             if (!month.equals(currentMonth)) {
                 if (groupId != -1) {
-                    // when new group, commit pair for last group and reset children
+                    // when new group, add total price to group, commit pair for last group and reset children
+                    String formattedGroupTotalPrice;
+                    if (currPref.equals("2")) {
+                        formattedGroupTotalPrice = String.format("%.2f", groupTotalPrice) + " $";
+                    } else {
+                        formattedGroupTotalPrice = String.format("%.2f", groupTotalPrice) + " €";
+                    }
+                    group.setTotalPrice(formattedGroupTotalPrice);
+                    groupTotalPrice = 0;
                     mData.add(new Pair<GroupData, List<ChildData>>(group, children));
                     children = new ArrayList<>();
                 }
@@ -78,15 +91,14 @@ public class TransactionExpandableDataProvider {
                         + months[cal.get(Calendar.MONTH)] + " "
                         + Integer.toString(cal.get(Calendar.YEAR));
                 final double childPrice = cursor.getDouble(cursor.getColumnIndexOrThrow(DbSQLiteHelper.TRANSACTION_PRICE));
-                // get preferences for currency display
-                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-                String currPref = sharedPref.getString("pref_key_currency", "1");
                 String formattedChildPrice;
                 if (currPref.equals("2")) {
                     formattedChildPrice = String.format("%.2f", childPrice) + " $";
                 } else {
                     formattedChildPrice = String.format("%.2f", childPrice) + " €";
                 }
+                // update group total price
+                groupTotalPrice += childPrice;
                 final String childCategory = cursor.getString(cursor.getColumnIndexOrThrow(DbSQLiteHelper.TRANSACTION_CATEGORY));
                 final int childSwipeReaction = RecyclerViewSwipeManager.REACTION_CAN_SWIPE_LEFT | RecyclerViewSwipeManager.REACTION_CAN_SWIPE_RIGHT;
 
@@ -94,6 +106,14 @@ public class TransactionExpandableDataProvider {
 
         } while (cursor.moveToNext());
 
+        // when last group, add total price to group, commit pair for last group and reset children
+        String formattedGroupTotalPrice;
+        if (currPref.equals("2")) {
+            formattedGroupTotalPrice = String.format("%.2f", groupTotalPrice) + " $";
+        } else {
+            formattedGroupTotalPrice = String.format("%.2f", groupTotalPrice) + " €";
+        }
+        group.setTotalPrice(formattedGroupTotalPrice);
         mData.add(new Pair<GroupData, List<ChildData>>(group, children));
 
     }
@@ -247,6 +267,7 @@ public class TransactionExpandableDataProvider {
 
         private final long mId;
         private final String mText;
+        private String mtotalPrice;
         private final int mSwipeReaction;
         private boolean mPinnedToSwipeLeft;
         private long mNextChildId;
@@ -261,6 +282,15 @@ public class TransactionExpandableDataProvider {
         @Override
         public long getGroupId() {
             return mId;
+        }
+
+        public String getTotalPrice() {
+            return mtotalPrice;
+        }
+
+
+        public void setTotalPrice(String totalPrice) {
+            mtotalPrice = totalPrice;
         }
 
         @Override
@@ -378,6 +408,8 @@ public class TransactionExpandableDataProvider {
     public static abstract class GroupData extends BaseData {
         public abstract boolean isSectionHeader();
         public abstract String getText();
+        public abstract String getTotalPrice();
+        public abstract void setTotalPrice(String totalPrice);
         public abstract long getGroupId();
     }
 

@@ -1,9 +1,7 @@
 package com.lundincast.my_finance_manager.activities;
 
-import android.app.ActionBar;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,8 +9,13 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -28,21 +31,50 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Calendar;
 
-public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
+public class MainActivity extends AppCompatActivity {
 
+    private Toolbar toolbar;
     public TransactionDataSource datasource;
     public CategoriesDataSource catDatasource;
     public boolean firstOverviewFragInit = true;
     public int spinnerSelected = 0;
     SharedPreferences sharedPref;
 
-    private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
-    private static final String STATE_SELECTED_SPINNER_ITEM = "selected_spinner_item";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout.addTab(tabLayout.newTab().setText("Overview"));
+        tabLayout.addTab(tabLayout.newTab().setText("List"));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        final PagerAdapter adapter = new PagerAdapter
+                (getSupportFragmentManager(), tabLayout.getTabCount());
+        viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
         // Check if a database file exists already. If it doesn't, it's the first time the
         // app is launch so we create a db and load the shipped database file situated in the
@@ -74,14 +106,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         }
 
 
-        // set up the actionbar to show tabs
-        final ActionBar actionBar = getActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-        // add 2 tabs: Overview and List
-        actionBar.addTab(actionBar.newTab().setText("Overview").setTabListener(this), true);
-        actionBar.addTab(actionBar.newTab().setText("List").setTabListener(this));
-
         // display specific tab if specified in Intent
         Intent incomingIntent = getIntent();
         Bundle extras = incomingIntent.getExtras();
@@ -111,52 +135,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        // Serialize the current tab position.
-        outState.putInt(STATE_SELECTED_NAVIGATION_ITEM, getActionBar()
-                .getSelectedNavigationIndex());
-        outState.putInt(STATE_SELECTED_SPINNER_ITEM, this.spinnerSelected);
-    }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        // Restore the previously serialized current tab position.
-        if (savedInstanceState.containsKey(STATE_SELECTED_NAVIGATION_ITEM)) {
-            getActionBar().setSelectedNavigationItem(savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
-        } else {
-            getActionBar().setSelectedNavigationItem(0);
-        }
-        // Restore the previously serialized spinner item selected
-        if (savedInstanceState.containsKey(STATE_SELECTED_SPINNER_ITEM)) {
-            this.spinnerSelected = savedInstanceState.getInt(STATE_SELECTED_SPINNER_ITEM);
-        }
-    }
-
-    @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-        Fragment fragment;
-
-        if (tab.getPosition() == 0) {
-            fragment = new OverviewFragment();
-        } else {
-            fragment = new ListTransactionsFragment();
-        }
-        getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.container, fragment)
-                            .commit();
-
-    }
-
-    @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
-
-    }
-
-    @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -206,6 +185,36 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    public class PagerAdapter extends FragmentStatePagerAdapter {
+        int mNumOfTabs;
+
+        public PagerAdapter(FragmentManager fm, int NumOfTabs) {
+            super(fm);
+            this.mNumOfTabs = NumOfTabs;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+
+            switch (position) {
+                case 0:
+                    OverviewFragment tab1 = new OverviewFragment();
+                    return tab1;
+                case 1:
+                    ListTransactionsFragment tab2 = new ListTransactionsFragment();
+                    return tab2;
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return mNumOfTabs;
+        }
     }
 
 }

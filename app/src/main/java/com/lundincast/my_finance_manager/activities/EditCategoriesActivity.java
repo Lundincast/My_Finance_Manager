@@ -1,12 +1,13 @@
 package com.lundincast.my_finance_manager.activities;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -25,8 +26,9 @@ import com.lundincast.my_finance_manager.activities.model.Category;
 
 import java.sql.SQLException;
 
-public class EditCategoriesActivity extends Activity implements AdapterView.OnItemSelectedListener {
+public class EditCategoriesActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
+    private Toolbar toolbar;
     private CategoriesDataSource datasource;
     private Category category;
     private String color;
@@ -37,6 +39,11 @@ public class EditCategoriesActivity extends Activity implements AdapterView.OnIt
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_categories);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         nameEditText = (EditText) findViewById(R.id.category_name);
         spinner = (Spinner) findViewById(R.id.category_color);
 

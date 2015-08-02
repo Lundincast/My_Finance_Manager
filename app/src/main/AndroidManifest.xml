@@ -18,7 +18,7 @@
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@android:style/Theme.Holo.Light" >
+            android:theme="@style/FinanceManagerTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -34,7 +34,7 @@
             android:name=".activities.ListCategoriesActivity"
             android:label="@string/title_activity_categories"
             android:parentActivityName=".activities.SettingsActivity"
-            android:theme="@android:style/Theme.Holo.Light" >
+            android:theme="@style/FinanceManagerTheme" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.SettingsActivity" />
@@ -44,7 +44,7 @@
             android:name=".activities.CreateCategoriesActivity"
             android:label="New category"
             android:parentActivityName=".activities.ListCategoriesActivity"
-            android:theme="@android:style/Theme.Holo.Light"
+            android:theme="@style/FinanceManagerTheme"
             android:windowSoftInputMode="stateVisible" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -54,7 +54,7 @@
             android:name=".activities.EditCategoriesActivity"
             android:label="@string/title_activity_edit_categories"
             android:parentActivityName=".activities.ListCategoriesActivity"
-            android:theme="@android:style/Theme.Holo.Light"
+            android:theme="@style/FinanceManagerTheme"
             android:windowSoftInputMode="stateVisible" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

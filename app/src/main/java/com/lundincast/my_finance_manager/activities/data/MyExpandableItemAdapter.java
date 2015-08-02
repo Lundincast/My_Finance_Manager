@@ -41,7 +41,7 @@ public class MyExpandableItemAdapter
 
         public MyBaseViewHolder(View v) {
             super(v);
-            mContainer = (FrameLayout) v.findViewById(R.id.container);
+//            mContainer = (FrameLayout) v.findViewById(R.id.container);
 //            mDragHandle = v.findViewById(R.id.drag_handle);
 
             // hide the drag handle

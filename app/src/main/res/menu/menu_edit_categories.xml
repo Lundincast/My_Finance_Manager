@@ -4,13 +4,13 @@
     tools:context="com.lundincast.my_finance_manager.activities.EditCategoriesActivity">
 
     <item android:id="@+id/delete_action"
-        android:icon="@drawable/ic_action_discard"
+        android:icon="@drawable/ic_delete_white_48dp"
         android:title="Delete"
-        android:showAsAction="always" />
+        app:showAsAction="always" />
 
     <item android:id="@+id/accept_action"
-        android:icon="@drawable/ic_action_accept"
+        android:icon="@drawable/ic_done_white_48dp"
         android:title="Accept"
-        android:showAsAction="always" />
+        app:showAsAction="always" />
 
 </menu>

@@ -1,9 +1,10 @@
 package com.lundincast.my_finance_manager.activities;
 
-import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,8 +18,9 @@ import com.lundincast.my_finance_manager.activities.data.DbSQLiteHelper;
 
 import java.sql.SQLException;
 
-public class ListCategoriesActivity extends ListActivity {
+public class ListCategoriesActivity extends AppCompatActivity {
 
+    private Toolbar toolbar;
     private CategoriesDataSource datasource;
     private CategoryCursorAdapter adapter;
 
@@ -28,7 +30,12 @@ public class ListCategoriesActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-           setContentView(R.layout.activity_categories);
+        setContentView(R.layout.activity_categories);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         datasource = new CategoriesDataSource(this);
         try {
             datasource.open();
@@ -38,9 +45,9 @@ public class ListCategoriesActivity extends ListActivity {
         final Cursor cursor = datasource.getAllCategories();
 
         // Use the custom adapter to populate the listview
+        ListView lv = (ListView) findViewById(R.id.listview);
         adapter = new CategoryCursorAdapter(this, cursor);
-        setListAdapter(adapter);
-        ListView lv = getListView();
+        lv.setAdapter(adapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

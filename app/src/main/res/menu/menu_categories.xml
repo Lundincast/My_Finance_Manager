@@ -4,8 +4,8 @@
     tools:context="com.lundincast.my_finance_manager.activities.ListCategoriesActivity">
 
     <item android:id="@+id/action_new"
-        android:icon="@drawable/ic_action_new"
+        android:icon="@drawable/ic_add_white_48dp"
         android:title="@string/add_category"
-        android:showAsAction="always"/>
+        app:showAsAction="always"/>
 
 </menu>

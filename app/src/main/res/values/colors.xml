@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="ColorPrimary">#4182EF</color>
+    <color name="ColorPrimaryDark">#3465D1</color>
+
     <color name="Red">#FF8D9A</color>
     <color name="Blue">#87EAFE</color>
     <color name="Dark_blue">#192980</color>
